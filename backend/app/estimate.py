@@ -17,6 +17,29 @@ def _round_half_up(value: float) -> int:
     return int(Decimal(str(value)).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
 
+# User-assisted calibration: only trust a personal ads/minute rate once the
+# user has marked ads over a meaningful sample of time. Below this, fall back to
+# the seeded platform default. See "Calibration" in docs/ESTIMATE_SPEC.md.
+MIN_CALIBRATION_MINUTES = 15.0
+
+
+def effective_ads_per_minute(
+    config: "PlatformConfig",
+    observed_ads: int,
+    observed_minutes: float,
+) -> float:
+    """Personal ads/minute from the user's own ad marks, else the default.
+
+    ``observed_ads`` is how many ads the user marked while spending
+    ``observed_minutes`` on this platform. With enough observed time we honour
+    their real frequency (including 0, if they genuinely saw none); otherwise we
+    keep the conservative seeded default.
+    """
+    if observed_minutes >= MIN_CALIBRATION_MINUTES and observed_ads >= 0:
+        return observed_ads / observed_minutes
+    return config.ads_per_minute
+
+
 @dataclass(frozen=True)
 class PlatformConfig:
     """Tunable per-platform ad assumptions."""
@@ -53,8 +76,16 @@ class AttentionReceipt:
     per_platform: list[PlatformEstimate]
 
 
-def estimate_platform(config: PlatformConfig, duration_seconds: float) -> PlatformEstimate:
-    """Estimate ads + value for one platform given seconds of usage."""
+def estimate_platform(
+    config: PlatformConfig,
+    duration_seconds: float,
+    personal_ads_per_minute: float | None = None,
+) -> PlatformEstimate:
+    """Estimate ads + value for one platform given seconds of usage.
+
+    ``personal_ads_per_minute``, when provided, overrides the platform default
+    (used for user-assisted calibration; see :func:`effective_ads_per_minute`).
+    """
     seconds = max(0.0, float(duration_seconds))
     minutes = seconds / 60.0
 
@@ -68,7 +99,8 @@ def estimate_platform(config: PlatformConfig, duration_seconds: float) -> Platfo
             value_high_inr=0.0,
         )
 
-    ads = _round_half_up(minutes * config.ads_per_minute)
+    rate = config.ads_per_minute if personal_ads_per_minute is None else personal_ads_per_minute
+    ads = _round_half_up(minutes * rate)
     value_low = ads * config.low_cpm_inr / 1000.0
     value_high = ads * config.high_cpm_inr / 1000.0
     return PlatformEstimate(
@@ -84,6 +116,7 @@ def estimate_platform(config: PlatformConfig, duration_seconds: float) -> Platfo
 def build_receipt(
     configs_by_package: dict[str, PlatformConfig],
     usage_seconds_by_package: dict[str, float],
+    personal_rates_by_package: dict[str, float] | None = None,
 ) -> AttentionReceipt:
     """Combine per-platform usage into a daily/weekly attention receipt.
 
@@ -91,7 +124,11 @@ def build_receipt(
     Packages without a known config are ignored (they don't contribute value),
     but their time is *not* counted in totals either — only configured platforms
     are part of the "monetized attention" story.
+
+    ``personal_rates_by_package`` optionally supplies a calibrated ads/minute
+    rate per package (from user-assisted ad counting), overriding the default.
     """
+    rates = personal_rates_by_package or {}
     per_platform: list[PlatformEstimate] = []
     total_minutes = 0.0
     total_ads = 0
@@ -102,7 +139,7 @@ def build_receipt(
         config = configs_by_package.get(package)
         if config is None:
             continue
-        est = estimate_platform(config, seconds)
+        est = estimate_platform(config, seconds, rates.get(package))
         per_platform.append(est)
         total_minutes += est.minutes
         total_ads += est.estimated_ads_seen

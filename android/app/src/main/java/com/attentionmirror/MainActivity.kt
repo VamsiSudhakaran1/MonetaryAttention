@@ -9,10 +9,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.attentionmirror.domain.ShareCardText
 import com.attentionmirror.ui.AttentionApp
 import com.attentionmirror.ui.AttentionMirrorTheme
 import com.attentionmirror.ui.AttentionViewModel
+import com.attentionmirror.ui.ReceiptSharer
 import com.attentionmirror.tracking.UsageStatsCollector
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
 
@@ -28,6 +32,16 @@ class MainActivity : ComponentActivity() {
                     onGrantAccess = {
                         startActivity(UsageStatsCollector(this).usageAccessSettingsIntent())
                     },
+                    onShareReceipt = {
+                        val receipt = state.today ?: return@AttentionApp
+                        val dateLabel = LocalDate.now()
+                            .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+                        ReceiptSharer.share(
+                            this,
+                            ShareCardText.fromReceipt(receipt, dateLabel, state.hardTruthMode),
+                        )
+                    },
+                    onToggleHardTruth = { viewModel.setHardTruthMode(it) },
                 )
             }
         }

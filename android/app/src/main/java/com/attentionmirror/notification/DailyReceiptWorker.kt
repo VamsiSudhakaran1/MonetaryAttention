@@ -12,6 +12,7 @@ import androidx.work.WorkerParameters
 import com.attentionmirror.MainActivity
 import com.attentionmirror.R
 import com.attentionmirror.data.AttentionRepository
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.Formatting
 
 /**
@@ -38,11 +39,12 @@ class DailyReceiptWorker(
                 receipt.estimatedValueLowInr,
                 receipt.estimatedValueHighInr,
             ),
+            tagline = Copy.tagline(repo.hardTruthMode),
         )
         return Result.success()
     }
 
-    private fun postNotification(time: String, ads: Int, value: String) {
+    private fun postNotification(time: String, ads: Int, value: String, tagline: String) {
         ensureChannel(applicationContext)
 
         if (ActivityCompat.checkSelfPermission(
@@ -63,6 +65,7 @@ class DailyReceiptWorker(
                     "Estimated ads shown: $ads\n" +
                         "Estimated value created: $value\n" +
                         "Paid back to you: ₹0\n\n" +
+                        "$tagline\n" +
                         "Tap to see your Attention Receipt.",
                 ),
             )

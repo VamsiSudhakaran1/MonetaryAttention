@@ -24,4 +24,11 @@ interface UsageDao {
             "GROUP BY packageName"
     )
     suspend fun secondsBetween(start: String, end: String): List<PackageSeconds>
+
+    /** All tracked time per package, used to calibrate personal ad rates. */
+    @Query(
+        "SELECT packageName, SUM(durationSeconds) AS totalSeconds " +
+            "FROM usage_records GROUP BY packageName"
+    )
+    suspend fun secondsPerPackageAllTime(): List<PackageSeconds>
 }

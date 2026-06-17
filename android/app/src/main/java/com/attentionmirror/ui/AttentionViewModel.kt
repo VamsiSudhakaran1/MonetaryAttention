@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 data class UiState(
     val loading: Boolean = true,
     val hasUsageAccess: Boolean = false,
+    val hardTruthMode: Boolean = false,
     val today: AttentionReceipt? = null,
     val week: AttentionReceipt? = null,
 )
@@ -31,9 +32,15 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
             _state.value = UiState(
                 loading = false,
                 hasUsageAccess = hasAccess,
+                hardTruthMode = repo.hardTruthMode,
                 today = repo.dailyReceipt(),
                 week = repo.weeklyReceipt(),
             )
         }
+    }
+
+    fun setHardTruthMode(enabled: Boolean) {
+        repo.hardTruthMode = enabled
+        _state.value = _state.value.copy(hardTruthMode = enabled)
     }
 }

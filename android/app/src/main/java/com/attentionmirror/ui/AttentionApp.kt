@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,10 +25,16 @@ private enum class Tab(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Filled.Home),
     Receipt("Receipt", Icons.Filled.ReceiptLong),
     Week("Week", Icons.Filled.CalendarMonth),
+    Settings("Settings", Icons.Filled.Settings),
 }
 
 @Composable
-fun AttentionApp(state: UiState, onGrantAccess: () -> Unit) {
+fun AttentionApp(
+    state: UiState,
+    onGrantAccess: () -> Unit,
+    onShareReceipt: () -> Unit,
+    onToggleHardTruth: (Boolean) -> Unit,
+) {
     if (!state.hasUsageAccess) {
         PermissionGate(onGrant = onGrantAccess)
         return
@@ -58,10 +65,21 @@ fun AttentionApp(state: UiState, onGrantAccess: () -> Unit) {
                 HomeScreen(state.today, onViewReceipt = { tab = Tab.Receipt.ordinal })
             }
             Tab.Receipt -> androidx.compose.foundation.layout.Box(modifier) {
-                ReceiptScreen(state.today, dateLabel)
+                ReceiptScreen(
+                    receipt = state.today,
+                    dateLabel = dateLabel,
+                    hardTruthMode = state.hardTruthMode,
+                    onShare = onShareReceipt,
+                )
             }
             Tab.Week -> androidx.compose.foundation.layout.Box(modifier) {
                 WeeklyScreen(state.week)
+            }
+            Tab.Settings -> androidx.compose.foundation.layout.Box(modifier) {
+                SettingsScreen(
+                    hardTruthMode = state.hardTruthMode,
+                    onToggleHardTruth = onToggleHardTruth,
+                )
             }
         }
     }

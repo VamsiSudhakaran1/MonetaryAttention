@@ -84,3 +84,35 @@ def test_build_receipt_aggregates_and_sorts():
     ]
     # unknown app excluded
     assert all(p.package_name != "com.unknown.app" for p in receipt.per_platform)
+
+
+def test_calibration_uses_personal_rate_with_enough_sample():
+    # Spec example: 7 ads marked over 20 minutes -> 0.35 ads/min.
+    rate = engine.effective_ads_per_minute(cfg(), observed_ads=7, observed_minutes=20)
+    assert rate == 0.35
+
+
+def test_calibration_falls_back_below_sample_threshold():
+    # Only 5 minutes observed (< 15) -> keep the seeded default.
+    rate = engine.effective_ads_per_minute(cfg(), observed_ads=4, observed_minutes=5)
+    assert rate == 0.20
+
+
+def test_calibration_honours_zero_ads_when_sampled_enough():
+    # User spent 30 min and marked no ads -> trust their 0 rate.
+    rate = engine.effective_ads_per_minute(cfg(), observed_ads=0, observed_minutes=30)
+    assert rate == 0.0
+
+
+def test_personal_rate_overrides_default_in_estimate():
+    # 60 min at a calibrated 0.35 ads/min -> 21 ads (vs 12 at the 0.20 default).
+    est = engine.estimate_platform(cfg(), 60 * 60, personal_ads_per_minute=0.35)
+    assert est.estimated_ads_seen == 21
+
+
+def test_build_receipt_applies_personal_rates():
+    configs = {"com.google.android.youtube": cfg()}
+    usage = {"com.google.android.youtube": 60 * 60}
+    rates = {"com.google.android.youtube": 0.35}
+    receipt = engine.build_receipt(configs, usage, personal_rates_by_package=rates)
+    assert receipt.estimated_ads_seen == 21

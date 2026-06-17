@@ -88,3 +88,33 @@ value_high = round(31.15) = 31
 
 The numbers in the original mockups ("₹18–₹42") were illustrative; the engine
 output is whatever the seeded config produces. Tune CPMs to taste.
+
+## Calibration (user-assisted ad counting)
+
+Ad load varies wildly by account and content, so the user can mark ads they
+actually see ("I saw an ad"). We turn their marks into a **personal ads/minute**
+rate that overrides the platform default — without ever reading screen content.
+
+```
+if observed_minutes >= MIN_CALIBRATION_MINUTES (15):
+    effective_ads_per_minute = observed_ads / observed_minutes
+else:
+    effective_ads_per_minute = config.ads_per_minute   # not enough sample yet
+```
+
+A sufficiently-sampled `0` is honoured (if you genuinely saw no ads, your rate is
+0). Worked example from the brief: 7 ads marked over 20 minutes → `7 / 20 = 0.35`
+ads/min. Everything downstream (`ads_seen`, value range) uses this rate.
+
+- Python: `effective_ads_per_minute(...)`, plus the `personal_ads_per_minute` /
+  `personal_rates_by_package` overrides on `estimate_platform` / `build_receipt`.
+- Kotlin: `Calibration` + the `personalRatesByPackage` override on
+  `EstimateEngine.buildReceipt`. Marks are stored locally in Room (`ad_marks`)
+  and never leave the device.
+
+## Tone (hard-truth mode)
+
+The math is identical regardless of tone; only the *copy* changes. The receipt's
+closing line and the daily notification have a respectful default and an opt-in
+"hard truth" variant (see `domain/Copy.kt`). Default is respectful — the stronger
+wording is shown only after the user enables hard-truth mode in Settings.

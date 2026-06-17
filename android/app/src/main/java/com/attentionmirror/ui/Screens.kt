@@ -5,16 +5,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.attentionmirror.domain.AttentionReceipt
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.Formatting
 
 @Composable
@@ -64,7 +70,12 @@ fun HomeScreen(receipt: AttentionReceipt?, onViewReceipt: () -> Unit) {
 }
 
 @Composable
-fun ReceiptScreen(receipt: AttentionReceipt?, dateLabel: String) {
+fun ReceiptScreen(
+    receipt: AttentionReceipt?,
+    dateLabel: String,
+    hardTruthMode: Boolean,
+    onShare: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
     ) {
@@ -84,12 +95,52 @@ fun ReceiptScreen(receipt: AttentionReceipt?, dateLabel: String) {
             Text("Amount returned to you: ₹${r.userReceivedInr}")
         }
         Text(
-            "Your time created monetizable attention. You were paid with distraction.",
+            Copy.conclusion(hardTruthMode),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(top = 8.dp),
         )
+        Button(onClick = onShare, modifier = Modifier.padding(top = 16.dp)) {
+            Text("Share receipt")
+        }
+    }
+}
+
+@Composable
+fun SettingsScreen(
+    hardTruthMode: Boolean,
+    onToggleHardTruth: (Boolean) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
+    ) {
+        Text("Settings", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+
+        SectionCard("Hard truth mode") {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "Use stronger wording on your receipt and notification.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(end = 12.dp),
+                )
+                Switch(checked = hardTruthMode, onCheckedChange = onToggleHardTruth)
+            }
+        }
+
+        SectionCard("Calibrate ad counting") {
+            Text(
+                "Add the \"I saw an ad\" Quick Settings tile, then tap it whenever " +
+                    "you spot an ad while scrolling. After ~15 minutes on a platform " +
+                    "your real ad frequency replaces our default estimate. Nothing " +
+                    "leaves your device.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 

@@ -52,4 +52,33 @@ class UsageStatsCollector(private val context: Context) {
             .filter { it.packageName in DefaultPlatforms.PACKAGES && it.totalTimeInForeground > 0 }
             .map { DailyUsage(it.packageName, it.totalTimeInForeground / 1000L) }
     }
+
+    /**
+     * The most recently foregrounded *tracked* package within the last few
+     * minutes, or null. Used to attribute an "I saw an ad" tap to the platform
+     * the user is actually on — without reading any screen content.
+     */
+    fun currentForegroundTrackedPackage(): String? {
+        if (!hasUsageAccess()) return null
+
+        val manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val now = System.currentTimeMillis()
+        val events = manager.queryEvents(now - LOOKBACK_MS, now)
+
+        var lastTrackedPackage: String? = null
+        val event = android.app.usage.UsageEvents.Event()
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event)
+            if (event.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND &&
+                event.packageName in DefaultPlatforms.PACKAGES
+            ) {
+                lastTrackedPackage = event.packageName
+            }
+        }
+        return lastTrackedPackage
+    }
+
+    private companion object {
+        const val LOOKBACK_MS = 5 * 60 * 1000L
+    }
 }
