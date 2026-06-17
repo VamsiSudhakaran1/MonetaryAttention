@@ -5,9 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [UsageRecord::class], version = 1, exportSchema = false)
+@Database(entities = [UsageRecord::class, AdMark::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun usageDao(): UsageDao
+    abstract fun adMarkDao(): AdMarkDao
 
     companion object {
         @Volatile
@@ -19,7 +20,12 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "attention_mirror.db",
-                ).build().also { instance = it }
+                )
+                    // Pre-release: usage is re-derived from the system each run,
+                    // so a destructive upgrade is acceptable for now.
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { instance = it }
             }
     }
 }

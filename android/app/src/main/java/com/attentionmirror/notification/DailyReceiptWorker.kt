@@ -12,7 +12,9 @@ import androidx.work.WorkerParameters
 import com.attentionmirror.MainActivity
 import com.attentionmirror.R
 import com.attentionmirror.data.AttentionRepository
+import com.attentionmirror.domain.DynamicMessages
 import com.attentionmirror.domain.Formatting
+import java.time.LocalDate
 
 /**
  * Runs once a day (see [DailyReceiptScheduler]). Refreshes today's usage and
@@ -31,18 +33,28 @@ class DailyReceiptWorker(
         val receipt = repo.dailyReceipt()
         if (receipt.totalMinutes <= 0) return Result.success()
 
+        // A fresh, day-specific message so the notification never repeats.
+        val message = DynamicMessages.forDay(
+            receipt = receipt,
+            yesterdayMinutes = null,
+            peakHourLabel = null,
+            date = LocalDate.now(),
+            hardTruth = repo.hardTruthMode,
+        )
+
         postNotification(
-            time = Formatting.minutes(receipt.totalMinutes),
+            title = message.headline,
             ads = receipt.estimatedAdsSeen,
             value = Formatting.valueRange(
                 receipt.estimatedValueLowInr,
                 receipt.estimatedValueHighInr,
             ),
+            tagline = message.body,
         )
         return Result.success()
     }
 
-    private fun postNotification(time: String, ads: Int, value: String) {
+    private fun postNotification(title: String, ads: Int, value: String, tagline: String) {
         ensureChannel(applicationContext)
 
         if (ActivityCompat.checkSelfPermission(
@@ -56,13 +68,14 @@ class DailyReceiptWorker(
         val openApp = MainActivity.pendingIntent(applicationContext)
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_receipt)
-            .setContentTitle("You gave $time of attention today")
+            .setContentTitle(title)
             .setContentText("~$ads ads · created $value · returned to you ₹0")
             .setStyle(
                 NotificationCompat.BigTextStyle().bigText(
                     "Estimated ads shown: $ads\n" +
                         "Estimated value created: $value\n" +
                         "Paid back to you: ₹0\n\n" +
+                        "$tagline\n" +
                         "Tap to see your Attention Receipt.",
                 ),
             )

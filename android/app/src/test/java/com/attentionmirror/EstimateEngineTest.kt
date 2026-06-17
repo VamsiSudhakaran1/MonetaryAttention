@@ -1,5 +1,6 @@
 package com.attentionmirror
 
+import com.attentionmirror.domain.Calibration
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.EstimateEngine
 import com.attentionmirror.domain.PlatformConfig
@@ -60,5 +61,37 @@ class EstimateEngineTest {
             receipt.perPlatform.map { it.platform },
         )
         assertTrue(receipt.perPlatform.none { it.packageName == "com.unknown.app" })
+    }
+
+    @Test
+    fun calibrationUsesPersonalRateWithEnoughSample() {
+        // 7 ads marked over 20 minutes -> 0.35 ads/min (matches the spec example).
+        assertEquals(0.35, Calibration.effectiveAdsPerMinute(youtube, 7, 20.0), 1e-9)
+    }
+
+    @Test
+    fun calibrationFallsBackBelowThreshold() {
+        // Only 5 minutes observed (< 15) -> keep the seeded default.
+        assertEquals(0.20, Calibration.effectiveAdsPerMinute(youtube, 4, 5.0), 1e-9)
+    }
+
+    @Test
+    fun calibrationHonoursZeroWhenSampledEnough() {
+        assertEquals(0.0, Calibration.effectiveAdsPerMinute(youtube, 0, 30.0), 1e-9)
+    }
+
+    @Test
+    fun personalRateOverridesDefault() {
+        // 60 min at calibrated 0.35 -> 21 ads (vs 12 at the 0.20 default).
+        val est = EstimateEngine.estimatePlatform(youtube, 60 * 60, personalAdsPerMinute = 0.35)
+        assertEquals(21, est.estimatedAdsSeen)
+    }
+
+    @Test
+    fun buildReceiptAppliesPersonalRates() {
+        val usage = mapOf("com.google.android.youtube" to 60L * 60)
+        val rates = mapOf("com.google.android.youtube" to 0.35)
+        val receipt = EstimateEngine.buildReceipt(DefaultPlatforms.BY_PACKAGE, usage, rates)
+        assertEquals(21, receipt.estimatedAdsSeen)
     }
 }

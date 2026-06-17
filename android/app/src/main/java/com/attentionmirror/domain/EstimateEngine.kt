@@ -33,7 +33,15 @@ object EstimateEngine {
     private fun roundHalfUp(value: Double): Int =
         BigDecimal.valueOf(value).setScale(0, RoundingMode.HALF_UP).toInt()
 
-    fun estimatePlatform(config: PlatformConfig, durationSeconds: Long): PlatformEstimate {
+    /**
+     * @param personalAdsPerMinute when non-null, overrides the platform default
+     *   (used for user-assisted calibration; see [Calibration]).
+     */
+    fun estimatePlatform(
+        config: PlatformConfig,
+        durationSeconds: Long,
+        personalAdsPerMinute: Double? = null,
+    ): PlatformEstimate {
         val seconds = durationSeconds.coerceAtLeast(0L)
         val minutes = seconds / 60.0
 
@@ -48,7 +56,8 @@ object EstimateEngine {
             )
         }
 
-        val ads = roundHalfUp(minutes * config.adsPerMinute)
+        val rate = personalAdsPerMinute ?: config.adsPerMinute
+        val ads = roundHalfUp(minutes * rate)
         return PlatformEstimate(
             platform = config.platform,
             packageName = config.packageName,
@@ -66,6 +75,7 @@ object EstimateEngine {
     fun buildReceipt(
         configsByPackage: Map<String, PlatformConfig>,
         usageSecondsByPackage: Map<String, Long>,
+        personalRatesByPackage: Map<String, Double> = emptyMap(),
     ): AttentionReceipt {
         var totalMinutes = 0.0
         var totalAds = 0
@@ -75,7 +85,7 @@ object EstimateEngine {
 
         for ((pkg, seconds) in usageSecondsByPackage) {
             val config = configsByPackage[pkg] ?: continue
-            val est = estimatePlatform(config, seconds)
+            val est = estimatePlatform(config, seconds, personalRatesByPackage[pkg])
             perPlatform += est
             totalMinutes += est.minutes
             totalAds += est.estimatedAdsSeen
