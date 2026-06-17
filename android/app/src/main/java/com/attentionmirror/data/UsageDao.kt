@@ -31,4 +31,12 @@ interface UsageDao {
             "FROM usage_records GROUP BY packageName"
     )
     suspend fun secondsPerPackageAllTime(): List<PackageSeconds>
+
+    /** Seconds per (day, package) over a range — drives the weekly report. */
+    @Query(
+        "SELECT localDate, packageName, SUM(durationSeconds) AS totalSeconds " +
+            "FROM usage_records WHERE localDate BETWEEN :start AND :end " +
+            "GROUP BY localDate, packageName"
+    )
+    suspend fun secondsPerDayPackage(start: String, end: String): List<DatePackageSeconds>
 }

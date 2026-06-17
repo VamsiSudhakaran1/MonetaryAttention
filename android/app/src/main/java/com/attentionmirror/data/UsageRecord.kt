@@ -24,3 +24,10 @@ data class PackageSeconds(
     @androidx.room.ColumnInfo(name = "packageName") val packageName: String,
     @androidx.room.ColumnInfo(name = "totalSeconds") val totalSeconds: Long,
 )
+
+/** Projection used by the weekly report (seconds per package per day). */
+data class DatePackageSeconds(
+    @androidx.room.ColumnInfo(name = "localDate") val localDate: String,
+    @androidx.room.ColumnInfo(name = "packageName") val packageName: String,
+    @androidx.room.ColumnInfo(name = "totalSeconds") val totalSeconds: Long,
+)

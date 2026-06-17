@@ -5,10 +5,34 @@ import android.content.pm.PackageManager
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Calibration
 import com.attentionmirror.domain.DefaultPlatforms
+import com.attentionmirror.domain.DynamicMessage
+import com.attentionmirror.domain.DynamicMessages
 import com.attentionmirror.domain.EstimateEngine
+import com.attentionmirror.domain.Formatting
+import com.attentionmirror.domain.Timeline
+import com.attentionmirror.domain.UsageSession
 import com.attentionmirror.tracking.UsageStatsCollector
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+/** Everything the Home screen needs for one day. */
+data class DayInsights(
+    val receipt: AttentionReceipt,
+    val sessions: List<UsageSession>,
+    val hourlySeconds: List<Long>,
+    val message: DynamicMessage,
+)
+
+/** One day's receipt, used to plot the weekly chart. */
+data class DayReport(val date: LocalDate, val receipt: AttentionReceipt)
+
+/** Everything the Reports screen needs for a 7-day window. */
+data class WeekReport(
+    val days: List<DayReport>,
+    val total: AttentionReceipt,
+    val previousTotalMinutes: Double,
+)
 
 /**
  * Single entry point for the UI/worker: refresh today's usage from the system,
@@ -22,6 +46,7 @@ class AttentionRepository(
     private val settings: SettingsStore,
 ) {
     private val isoDate: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    private val zone: ZoneId = ZoneId.systemDefault()
 
     fun hasUsageAccess(): Boolean = collector.hasUsageAccess()
 
@@ -66,6 +91,45 @@ class AttentionRepository(
         val seconds = dao.secondsBetween(start.format(isoDate), endDay.format(isoDate))
             .associate { it.packageName to it.totalSeconds }
         return EstimateEngine.buildReceipt(DefaultPlatforms.BY_PACKAGE, seconds, personalRates())
+    }
+
+    /** Today's receipt plus the timeline + a fresh, day-specific message. */
+    suspend fun dayInsights(day: LocalDate = LocalDate.now()): DayInsights {
+        val receipt = dailyReceipt(day)
+        val sessions = collector.collectSessionsForDay(day, zone)
+        val dayStart = day.atStartOfDay(zone).toInstant().toEpochMilli()
+        val hourly = Timeline.hourlySeconds(sessions, dayStart)
+        val yesterdayMinutes = dao.secondsForDay(day.minusDays(1).format(isoDate))
+            .sumOf { it.totalSeconds } / 60.0
+        val peakLabel = if (hourly.sum() > 0) Formatting.hourLabel(Timeline.peakHour(hourly)) else null
+        val message = DynamicMessages.forDay(
+            receipt = receipt,
+            yesterdayMinutes = yesterdayMinutes.takeIf { it > 0 },
+            peakHourLabel = peakLabel,
+            date = day,
+            hardTruth = settings.hardTruthMode,
+        )
+        return DayInsights(receipt, sessions, hourly.toList(), message)
+    }
+
+    /** A 7-day report ending on [endDay], with the prior week for trend. */
+    suspend fun weekReport(endDay: LocalDate = LocalDate.now()): WeekReport {
+        val start = endDay.minusDays(6)
+        val rates = personalRates()
+        val byDate = dao.secondsPerDayPackage(start.format(isoDate), endDay.format(isoDate))
+            .groupBy { it.localDate }
+        val days = (0..6).map { offset ->
+            val date = start.plusDays(offset.toLong())
+            val seconds = byDate[date.format(isoDate)].orEmpty()
+                .associate { it.packageName to it.totalSeconds }
+            DayReport(date, EstimateEngine.buildReceipt(DefaultPlatforms.BY_PACKAGE, seconds, rates))
+        }
+        val total = weeklyReceipt(endDay)
+        val prevStart = start.minusDays(7)
+        val prevEnd = endDay.minusDays(7)
+        val previousMinutes = dao.secondsBetween(prevStart.format(isoDate), prevEnd.format(isoDate))
+            .sumOf { it.totalSeconds } / 60.0
+        return WeekReport(days, total, previousMinutes)
     }
 
     /**
