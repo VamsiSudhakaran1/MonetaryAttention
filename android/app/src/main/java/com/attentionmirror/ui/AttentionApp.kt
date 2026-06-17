@@ -1,6 +1,7 @@
 package com.attentionmirror.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +44,13 @@ fun AttentionApp(
     onShareReceipt: () -> Unit,
     onToggleHardTruth: (Boolean) -> Unit,
 ) {
+    if (state.loading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     if (!state.hasUsageAccess) {
         PermissionGate(onGrant = onGrantAccess)
         return
@@ -89,6 +98,7 @@ fun AttentionApp(
                     message = state.message,
                     sessions = state.sessions,
                     hourly = state.hourly,
+                    dateLabel = dateLabel,
                     onShare = onShareReceipt,
                 )
                 Tab.Reports -> ReportsScreen(week = state.week)

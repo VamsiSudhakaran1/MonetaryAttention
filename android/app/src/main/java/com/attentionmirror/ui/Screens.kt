@@ -19,10 +19,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.attentionmirror.data.WeekReport
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Copy
@@ -74,9 +81,15 @@ fun HomeScreen(
     message: DynamicMessage?,
     sessions: List<UsageSession>,
     hourly: List<Long>,
+    dateLabel: String,
     onShare: () -> Unit,
 ) {
     ScreenColumn {
+        Text(
+            "TODAY · ${dateLabel.uppercase()}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         if (message != null) {
             Text(message.headline, style = MaterialTheme.typography.titleLarge)
             Text(
@@ -90,6 +103,8 @@ fun HomeScreen(
             EmptyState()
             return@ScreenColumn
         }
+
+        val used = receipt.perPlatform.filter { it.minutes >= 1.0 }
 
         ValueHero(
             valueRange = Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr),
@@ -112,8 +127,8 @@ fun HomeScreen(
         }
 
         Section(title = "Where your time went") {
-            val maxMinutes = receipt.perPlatform.maxOfOrNull { it.minutes } ?: 1.0
-            receipt.perPlatform.forEach { p ->
+            val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
+            used.forEach { p ->
                 AppUsageRow(
                     packageName = p.packageName,
                     title = p.platform,
@@ -192,6 +207,11 @@ private fun SessionRow(session: UsageSession) {
     }
 }
 
+private val PaperBg = Color(0xFFF6F1E7)
+private val PaperInk = Color(0xFF1B1B1B)
+private val PaperMuted = Color(0xFF6E6A5F)
+private val PaperRule = Color(0x331B1B1B)
+
 @Composable
 fun ReceiptScreen(
     receipt: AttentionReceipt?,
@@ -200,51 +220,52 @@ fun ReceiptScreen(
     onShare: () -> Unit,
 ) {
     ScreenColumn {
-        Text("Attention Receipt", style = MaterialTheme.typography.headlineSmall)
-        Text(
-            dateLabel,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
         if (receipt == null || receipt.totalMinutes <= 0) {
+            Text("Attention Receipt", style = MaterialTheme.typography.headlineSmall)
             EmptyState()
             return@ScreenColumn
         }
 
-        Section(title = "Time spent") {
-            receipt.perPlatform.forEach { p ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        AppAvatar(p.packageName, 28.dp)
-                        Spacer(Modifier.width(10.dp))
-                        Text(p.platform, style = MaterialTheme.typography.bodyLarge)
-                    }
-                    Text(Formatting.minutes(p.minutes), style = MaterialTheme.typography.titleMedium)
-                }
-            }
-        }
+        // A printed-receipt aesthetic: warm paper, monospace, dashed rules.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(18.dp))
+                .background(PaperBg)
+                .padding(horizontal = 22.dp, vertical = 26.dp),
+        ) {
+            PaperCenter("ATTENTION MIRROR", size = 18.sp, color = PaperInk, bold = true, spacing = 2.sp)
+            Spacer(Modifier.height(4.dp))
+            PaperCenter("· unpaid attention receipt ·", size = 12.sp, color = PaperMuted)
+            PaperCenter(dateLabel, size = 12.sp, color = PaperMuted)
 
-        Section {
-            ReceiptLine("Estimated ads seen", "${receipt.estimatedAdsSeen}")
-            Spacer(Modifier.height(8.dp))
-            ReceiptLine(
-                "Estimated value created",
+            Spacer(Modifier.height(16.dp))
+            DashedDivider(PaperRule)
+            Spacer(Modifier.height(12.dp))
+
+            receipt.perPlatform.filter { it.minutes >= 1.0 }.forEach { p ->
+                PaperRow(p.platform, Formatting.minutes(p.minutes))
+            }
+
+            Spacer(Modifier.height(12.dp))
+            DashedDivider(PaperRule)
+            Spacer(Modifier.height(12.dp))
+
+            PaperRow("Ads seen", "${receipt.estimatedAdsSeen}")
+            PaperRow(
+                "Value created",
                 Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr),
             )
-            Spacer(Modifier.height(8.dp))
-            ReceiptLine("Amount returned to you", "₹${receipt.userReceivedInr}")
-        }
+            PaperRow("Returned to you", "₹${receipt.userReceivedInr}", strong = true)
 
-        Text(
-            Copy.conclusion(hardTruthMode),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary,
-        )
+            Spacer(Modifier.height(12.dp))
+            DashedDivider(PaperRule)
+            Spacer(Modifier.height(14.dp))
+
+            PaperCenter(Copy.conclusion(hardTruthMode), size = 14.sp, color = Brand.Coral, bold = true)
+            Spacer(Modifier.height(14.dp))
+            PaperCenter("* all values are estimates *", size = 11.sp, color = PaperMuted)
+        }
 
         Button(onClick = onShare, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.IosShare, contentDescription = null)
@@ -255,13 +276,44 @@ fun ReceiptScreen(
 }
 
 @Composable
-private fun ReceiptLine(label: String, value: String) {
-    Row(
+private fun PaperCenter(
+    text: String,
+    size: androidx.compose.ui.unit.TextUnit,
+    color: Color,
+    bold: Boolean = false,
+    spacing: androidx.compose.ui.unit.TextUnit = 0.sp,
+) {
+    Text(
+        text,
         modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontFamily = FontFamily.Monospace,
+        fontSize = size,
+        letterSpacing = spacing,
+        fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
+        color = color,
+    )
+}
+
+@Composable
+private fun PaperRow(label: String, value: String, strong: Boolean = false) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, style = MaterialTheme.typography.titleMedium)
+        Text(
+            label,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 14.sp,
+            color = PaperInk,
+        )
+        Text(
+            value,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 14.sp,
+            fontWeight = if (strong) FontWeight.Bold else FontWeight.Normal,
+            color = PaperInk,
+        )
     }
 }
 
@@ -319,8 +371,9 @@ fun ReportsScreen(week: WeekReport?) {
         }
 
         Section(title = "Who got your attention?") {
-            val maxMinutes = total.perPlatform.maxOfOrNull { it.minutes } ?: 1.0
-            total.perPlatform.forEach { p ->
+            val used = total.perPlatform.filter { it.minutes >= 1.0 }
+            val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
+            used.forEach { p ->
                 AppUsageRow(
                     packageName = p.packageName,
                     title = p.platform,
@@ -396,6 +449,14 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+
+        Text(
+            "Attention Mirror · v0.1.0",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

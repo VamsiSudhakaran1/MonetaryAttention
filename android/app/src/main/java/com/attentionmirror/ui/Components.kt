@@ -1,5 +1,6 @@
 package com.attentionmirror.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -180,6 +183,20 @@ fun Pill(text: String, color: Color) {
             .padding(horizontal = 12.dp, vertical = 6.dp),
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge, color = color)
+    }
+}
+
+/** A horizontal dashed rule — used on the paper-style receipt. */
+@Composable
+fun DashedDivider(color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxWidth().height(1.dp)) {
+        drawLine(
+            color = color,
+            start = Offset(0f, 0f),
+            end = Offset(size.width, 0f),
+            strokeWidth = size.height,
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(12f, 10f), 0f),
+        )
     }
 }
 
