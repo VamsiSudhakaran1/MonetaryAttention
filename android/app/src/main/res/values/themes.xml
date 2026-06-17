@@ -1,0 +1,4 @@
+<resources>
+    <!-- Base theme; Compose drives the real colors via AttentionMirrorTheme. -->
+    <style name="Theme.AttentionMirror" parent="android:Theme.Material.NoActionBar" />
+</resources>
