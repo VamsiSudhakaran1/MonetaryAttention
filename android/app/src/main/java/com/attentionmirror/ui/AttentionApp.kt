@@ -44,6 +44,7 @@ fun AttentionApp(
     onShareReceipt: () -> Unit,
     onToggleHardTruth: (Boolean) -> Unit,
     onToggleAdFree: (String, Boolean) -> Unit,
+    onOpenAdScanner: () -> Unit,
 ) {
     if (state.loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
@@ -115,6 +116,7 @@ fun AttentionApp(
                     monetizedPlatforms = state.monetizedPlatforms,
                     adFreePackages = state.adFreePackages,
                     onToggleAdFree = onToggleAdFree,
+                    onOpenAdScanner = onOpenAdScanner,
                 )
             }
         }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Restricted to the apps we already track, so the service never sees content
+  from anything else. Low-frequency events only, to keep it light.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowContentChanged|typeViewScrolled|typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRetrieveWindowContent="true"
+    android:notificationTimeout="300"
+    android:packageNames="com.facebook.katana,com.instagram.android,com.google.android.youtube,com.twitter.android,com.reddit.frontpage,com.snapchat.android,in.mohalla.sharechat,in.mohalla.video,com.eterno.shortvideos"
+    android:description="@string/accessibility_desc" />

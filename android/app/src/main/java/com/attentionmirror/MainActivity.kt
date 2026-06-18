@@ -43,6 +43,12 @@ class MainActivity : ComponentActivity() {
                     },
                     onToggleHardTruth = { viewModel.setHardTruthMode(it) },
                     onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
+                    onOpenAdScanner = {
+                        startActivity(
+                            Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    },
                 )
             }
         }

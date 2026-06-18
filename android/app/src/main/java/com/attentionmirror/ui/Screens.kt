@@ -409,6 +409,7 @@ fun SettingsScreen(
     monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
     adFreePackages: Set<String>,
     onToggleAdFree: (String, Boolean) -> Unit,
+    onOpenAdScanner: () -> Unit,
 ) {
     ScreenColumn {
         Text("Settings", style = MaterialTheme.typography.headlineSmall)
@@ -455,6 +456,23 @@ fun SettingsScreen(
                         checked = p.packageName in adFreePackages,
                         onCheckedChange = { onToggleAdFree(p.packageName, it) },
                     )
+                }
+            }
+        }
+
+        if (com.attentionmirror.BuildConfig.HAS_AD_SCANNER) {
+            Section(title = "Automatic ad detection") {
+                Text(
+                    "Opt-in. Counts real “Sponsored” labels on-device in supported " +
+                        "apps so your estimates become actual ad counts — great for " +
+                        "Reels. Reads only ad markers, stores only counts, and you can " +
+                        "turn it off anytime in Accessibility settings.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 10.dp),
+                )
+                Button(onClick = onOpenAdScanner) {
+                    Text("Open Accessibility settings")
                 }
             }
         }
