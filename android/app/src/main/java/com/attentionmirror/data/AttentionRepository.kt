@@ -132,24 +132,33 @@ class AttentionRepository(
         return WeekReport(days, total, previousMinutes)
     }
 
+    fun adFreePackages(): Set<String> = settings.adFreePackages
+
+    fun setAdFree(packageName: String, adFree: Boolean) = settings.setAdFree(packageName, adFree)
+
     /**
-     * Per-package calibrated ads/minute from the user's marks vs all tracked
-     * time. Packages without enough sampled time keep their default (no-op).
+     * Per-package ads/minute overrides applied on top of platform defaults:
+     *  - calibration from the user's "I saw an ad" marks vs tracked time, and
+     *  - a hard 0 for apps the user marked ad-free (Premium), so no ad value is
+     *    attributed even though their time is still shown.
      */
     private suspend fun personalRates(): Map<String, Double> {
-        val marks = adMarkDao.all()
-        if (marks.isEmpty()) return emptyMap()
-        val minutesByPackage = dao.secondsPerPackageAllTime()
-            .associate { it.packageName to it.totalSeconds / 60.0 }
         val rates = mutableMapOf<String, Double>()
-        for (mark in marks) {
-            val config = DefaultPlatforms.BY_PACKAGE[mark.packageName] ?: continue
-            rates[mark.packageName] = Calibration.effectiveAdsPerMinute(
-                config = config,
-                observedAds = mark.count,
-                observedMinutes = minutesByPackage[mark.packageName] ?: 0.0,
-            )
+        val marks = adMarkDao.all()
+        if (marks.isNotEmpty()) {
+            val minutesByPackage = dao.secondsPerPackageAllTime()
+                .associate { it.packageName to it.totalSeconds / 60.0 }
+            for (mark in marks) {
+                val config = DefaultPlatforms.BY_PACKAGE[mark.packageName] ?: continue
+                rates[mark.packageName] = Calibration.effectiveAdsPerMinute(
+                    config = config,
+                    observedAds = mark.count,
+                    observedMinutes = minutesByPackage[mark.packageName] ?: 0.0,
+                )
+            }
         }
+        // Ad-free (Premium) wins over any calibration: zero ads → zero value.
+        for (pkg in settings.adFreePackages) rates[pkg] = 0.0
         return rates
     }
 

@@ -43,6 +43,7 @@ fun AttentionApp(
     onGrantAccess: () -> Unit,
     onShareReceipt: () -> Unit,
     onToggleHardTruth: (Boolean) -> Unit,
+    onToggleAdFree: (String, Boolean) -> Unit,
 ) {
     if (state.loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
@@ -111,6 +112,9 @@ fun AttentionApp(
                 Tab.Settings -> SettingsScreen(
                     hardTruthMode = state.hardTruthMode,
                     onToggleHardTruth = onToggleHardTruth,
+                    monetizedPlatforms = state.monetizedPlatforms,
+                    adFreePackages = state.adFreePackages,
+                    onToggleAdFree = onToggleAdFree,
                 )
             }
         }

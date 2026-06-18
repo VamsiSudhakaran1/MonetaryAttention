@@ -406,6 +406,9 @@ fun ReportsScreen(week: WeekReport?) {
 fun SettingsScreen(
     hardTruthMode: Boolean,
     onToggleHardTruth: (Boolean) -> Unit,
+    monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
+    adFreePackages: Set<String>,
+    onToggleAdFree: (String, Boolean) -> Unit,
 ) {
     ScreenColumn {
         Text("Settings", style = MaterialTheme.typography.headlineSmall)
@@ -425,6 +428,34 @@ fun SettingsScreen(
                     )
                 }
                 Switch(checked = hardTruthMode, onCheckedChange = onToggleHardTruth)
+            }
+        }
+
+        Section(title = "Ad-free accounts") {
+            Text(
+                "Pay for Premium (YouTube, X, …)? Mark it ad-free. We keep showing " +
+                    "your time but stop estimating ad value for it.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            monetizedPlatforms.forEachIndexed { i, p ->
+                if (i > 0) HairlineDivider()
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AppAvatar(p.packageName, 32.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Text(p.platform, style = MaterialTheme.typography.titleMedium)
+                    }
+                    Switch(
+                        checked = p.packageName in adFreePackages,
+                        onCheckedChange = { onToggleAdFree(p.packageName, it) },
+                    )
+                }
             }
         }
 

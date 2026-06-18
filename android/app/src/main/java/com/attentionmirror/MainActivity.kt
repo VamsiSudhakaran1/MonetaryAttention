@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     onToggleHardTruth = { viewModel.setHardTruthMode(it) },
+                    onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
                 )
             }
         }
