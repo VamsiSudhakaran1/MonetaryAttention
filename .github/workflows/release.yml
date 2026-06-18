@@ -1,0 +1,76 @@
+name: Release
+
+# Tag a commit (e.g. v0.1.0) to build signed artifacts:
+#  - play release .aab  -> upload to Google Play (Internal testing track)
+#  - full release .apk  -> sideload / direct distribution (has the ad scanner)
+#
+# Signing uses repo secrets (Settings -> Secrets and variables -> Actions):
+#   ANDROID_KEYSTORE_BASE64  (base64 of your .jks: `base64 -w0 release.jks`)
+#   ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS
+#   ANDROID_KEY_PASSWORD
+# Without them, builds still run but produce UNSIGNED artifacts.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android-release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+
+      - name: Configure signing
+        if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          cat > keystore.properties <<EOF
+          storeFile=$RUNNER_TEMP/release.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Play bundle (.aab) and full APK
+        run: ./gradlew :app:bundlePlayRelease :app:assembleFullRelease --no-daemon
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p ../dist
+          cp app/build/outputs/bundle/playRelease/*.aab ../dist/ 2>/dev/null || true
+          cp app/build/outputs/apk/full/release/*.apk ../dist/ 2>/dev/null || true
+          ls -l ../dist
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: attention-mirror-release
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
