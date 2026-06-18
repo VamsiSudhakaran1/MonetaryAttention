@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,7 +37,7 @@ import com.attentionmirror.domain.Formatting
 import com.attentionmirror.domain.Timeline
 import com.attentionmirror.domain.UsageSession
 
-private val ScreenPadding = 18.dp
+private val ScreenPadding = 20.dp
 
 @Composable
 private fun ScreenColumn(content: @Composable () -> Unit) {
@@ -46,8 +45,8 @@ private fun ScreenColumn(content: @Composable () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = ScreenPadding, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(horizontal = ScreenPadding, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(26.dp),
     ) {
         content()
     }
@@ -128,7 +127,8 @@ fun HomeScreen(
 
         Section(title = "Where your time went") {
             val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
-            used.forEach { p ->
+            used.forEachIndexed { i, p ->
+                if (i > 0) HairlineDivider()
                 AppUsageRow(
                     packageName = p.packageName,
                     title = p.platform,
@@ -169,7 +169,8 @@ fun HomeScreen(
 
         if (sessions.isNotEmpty()) {
             Section(title = "Sessions today") {
-                sessions.sortedByDescending { it.startMillis }.take(8).forEach { s ->
+                sessions.sortedByDescending { it.startMillis }.take(8).forEachIndexed { i, s ->
+                    if (i > 0) HairlineDivider()
                     SessionRow(s)
                 }
             }
@@ -287,10 +288,9 @@ private fun PaperCenter(
         text,
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
-        fontFamily = FontFamily.Monospace,
         fontSize = size,
         letterSpacing = spacing,
-        fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
+        fontWeight = if (bold) FontWeight.SemiBold else FontWeight.Normal,
         color = color,
     )
 }
@@ -303,15 +303,13 @@ private fun PaperRow(label: String, value: String, strong: Boolean = false) {
     ) {
         Text(
             label,
-            fontFamily = FontFamily.Monospace,
             fontSize = 14.sp,
-            color = PaperInk,
+            color = PaperInk.copy(alpha = 0.7f),
         )
         Text(
             value,
-            fontFamily = FontFamily.Monospace,
             fontSize = 14.sp,
-            fontWeight = if (strong) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (strong) FontWeight.SemiBold else FontWeight.Medium,
             color = PaperInk,
         )
     }
@@ -373,7 +371,8 @@ fun ReportsScreen(week: WeekReport?) {
         Section(title = "Who got your attention?") {
             val used = total.perPlatform.filter { it.minutes >= 1.0 }
             val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
-            used.forEach { p ->
+            used.forEachIndexed { i, p ->
+                if (i > 0) HairlineDivider()
                 AppUsageRow(
                     packageName = p.packageName,
                     title = p.platform,

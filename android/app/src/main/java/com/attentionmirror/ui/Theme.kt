@@ -9,9 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.attentionmirror.R
 
 /**
  * Brand palette. A confident, dark-first identity (the app's whole premise is
@@ -25,16 +29,31 @@ object Brand {
     val Outline = Color(0xFF2A3344)
 
     val OnSurface = Color(0xFFECEFF4)
-    val Muted = Color(0xFF97A1B2)
+    val Muted = Color(0xFF8C97A8)
 
-    val Coral = Color(0xFFFF5A5F)   // "what others earned" — urgent, not angry
+    val Coral = Color(0xFFFF6168)   // "what others earned" — urgent, not angry
     val Amber = Color(0xFFFFC857)   // value / money
     val Mint = Color(0xFF34D399)    // positive / "good day"
-    val Sky = Color(0xFF5AA9FF)     // neutral data accent
+    val Sky = Color(0xFF6FB1FF)     // neutral data accent
 
-    val ValueGradient = Brush.linearGradient(listOf(Color(0xFFFF5A5F), Color(0xFFFF8A3D)))
+    val ValueGradient = Brush.linearGradient(listOf(Color(0xFFFF6168), Color(0xFFFF8A3D)))
     val NightGradient = Brush.verticalGradient(listOf(Color(0xFF161C2B), Color(0xFF10141F)))
 }
+
+// Manrope (variable). A clean, friendly geometric sans that stays legible at
+// small sizes for older eyes and reads as modern for younger users.
+private fun manrope(weight: FontWeight) = Font(
+    resId = R.font.manrope,
+    weight = weight,
+    variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
+)
+
+private val Manrope = FontFamily(
+    manrope(FontWeight.Normal),
+    manrope(FontWeight.Medium),
+    manrope(FontWeight.SemiBold),
+    manrope(FontWeight.Bold),
+)
 
 private val DarkColors = darkColorScheme(
     primary = Brand.Coral,
@@ -51,23 +70,25 @@ private val DarkColors = darkColorScheme(
 )
 
 private val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(10.dp),
-    small = RoundedCornerShape(14.dp),
-    medium = RoundedCornerShape(20.dp),
-    large = RoundedCornerShape(26.dp),
+    extraSmall = RoundedCornerShape(12.dp),
+    small = RoundedCornerShape(16.dp),
+    medium = RoundedCornerShape(22.dp),
+    large = RoundedCornerShape(28.dp),
     extraLarge = RoundedCornerShape(32.dp),
 )
 
+// Lighter weights, real line-height and gentle tracking — the opposite of the
+// chunky, tightly-spaced look that felt dated.
 private val AppTypography = Typography(
-    displayLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 52.sp, letterSpacing = (-1).sp),
-    displaySmall = TextStyle(fontWeight = FontWeight.Bold, fontSize = 34.sp, letterSpacing = (-0.5).sp),
-    headlineSmall = TextStyle(fontWeight = FontWeight.Bold, fontSize = 24.sp),
-    titleLarge = TextStyle(fontWeight = FontWeight.Bold, fontSize = 22.sp),
-    titleMedium = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 17.sp),
-    bodyLarge = TextStyle(fontWeight = FontWeight.Normal, fontSize = 16.sp),
-    bodyMedium = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
-    labelLarge = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 14.sp, letterSpacing = 0.3.sp),
-    labelMedium = TextStyle(fontWeight = FontWeight.Medium, fontSize = 12.sp, letterSpacing = 0.5.sp),
+    displayLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 46.sp, lineHeight = 50.sp, letterSpacing = (-0.5).sp),
+    displaySmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 30.sp, lineHeight = 36.sp),
+    headlineSmall = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 22.sp, lineHeight = 28.sp),
+    titleLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 27.sp),
+    titleMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Medium, fontSize = 16.sp, lineHeight = 22.sp),
+    bodyLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp),
+    bodyMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.Normal, fontSize = 14.sp, lineHeight = 21.sp),
+    labelLarge = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, lineHeight = 18.sp),
+    labelMedium = TextStyle(fontFamily = Manrope, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 1.sp),
 )
 
 @Composable
