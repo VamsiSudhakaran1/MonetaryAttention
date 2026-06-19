@@ -43,6 +43,10 @@ fun AttentionApp(
     onGrantAccess: () -> Unit,
     onShareReceipt: () -> Unit,
     onToggleHardTruth: (Boolean) -> Unit,
+    onToggleQuirky: (Boolean) -> Unit,
+    onPickNotificationTime: () -> Unit,
+    onToggleAdFree: (String, Boolean) -> Unit,
+    onOpenAdScanner: () -> Unit,
 ) {
     if (state.loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
@@ -105,12 +109,21 @@ fun AttentionApp(
                 Tab.Receipt -> ReceiptScreen(
                     receipt = state.today,
                     dateLabel = dateLabel,
-                    hardTruthMode = state.hardTruthMode,
+                    tone = com.attentionmirror.domain.Copy.toneOf(state.hardTruthMode, state.quirkyMode),
                     onShare = onShareReceipt,
                 )
                 Tab.Settings -> SettingsScreen(
                     hardTruthMode = state.hardTruthMode,
                     onToggleHardTruth = onToggleHardTruth,
+                    quirkyMode = state.quirkyMode,
+                    onToggleQuirky = onToggleQuirky,
+                    notificationHour = state.notificationHour,
+                    notificationMinute = state.notificationMinute,
+                    onPickNotificationTime = onPickNotificationTime,
+                    monetizedPlatforms = state.monetizedPlatforms,
+                    adFreePackages = state.adFreePackages,
+                    onToggleAdFree = onToggleAdFree,
+                    onOpenAdScanner = onOpenAdScanner,
                 )
             }
         }

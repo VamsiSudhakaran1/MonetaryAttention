@@ -29,6 +29,10 @@ object Formatting {
     fun valueRange(low: Int, high: Int): String =
         if (low == high) "₹$low" else "₹$low–₹$high"
 
+    /** A wall-clock time, e.g. (21, 30) -> "9:30 PM". */
+    fun timeOfDay(hour: Int, minute: Int): String =
+        java.time.LocalTime.of(hour.coerceIn(0, 23), minute.coerceIn(0, 59)).format(clockFmt)
+
     /** Hour-of-day (0–23) to a readable label: 0 -> "12 AM", 21 -> "9 PM". */
     fun hourLabel(hour: Int): String {
         val h = ((hour % 24) + 24) % 24

@@ -41,12 +41,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Unit tests (estimate engine)
-        run: ./gradlew :app:testDebugUnitTest --no-daemon
-      - name: Assemble debug APK
-        run: ./gradlew :app:assembleDebug --no-daemon
-      - name: Upload debug APK
+        run: ./gradlew :app:testPlayDebugUnitTest --no-daemon
+      - name: Assemble debug APKs (both flavors)
+        run: ./gradlew :app:assemblePlayDebug :app:assembleFullDebug --no-daemon
+      - name: Upload debug APKs
         uses: actions/upload-artifact@v4
         with:
           name: attention-mirror-debug
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: android/app/build/outputs/apk/*/debug/*.apk
           if-no-files-found: error

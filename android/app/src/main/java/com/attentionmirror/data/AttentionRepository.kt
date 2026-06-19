@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Calibration
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.DynamicMessage
 import com.attentionmirror.domain.DynamicMessages
@@ -11,8 +12,10 @@ import com.attentionmirror.domain.EstimateEngine
 import com.attentionmirror.domain.Formatting
 import com.attentionmirror.domain.Timeline
 import com.attentionmirror.domain.UsageSession
+import com.attentionmirror.notification.DailyReceiptScheduler
 import com.attentionmirror.tracking.UsageStatsCollector
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -55,6 +58,22 @@ class AttentionRepository(
         set(value) {
             settings.hardTruthMode = value
         }
+
+    var quirkyMode: Boolean
+        get() = settings.quirkyMode
+        set(value) {
+            settings.quirkyMode = value
+        }
+
+    val notificationHour: Int get() = settings.notificationHour
+    val notificationMinute: Int get() = settings.notificationMinute
+
+    /** Persist a new daily notification time and re-arm the scheduled work. */
+    fun setNotificationTime(hour: Int, minute: Int) {
+        settings.notificationHour = hour
+        settings.notificationMinute = minute
+        DailyReceiptScheduler.schedule(context, LocalTime.of(hour, minute))
+    }
 
     /** Record one user-marked ad, attributed to a tracked package. */
     suspend fun markAd(packageName: String) = adMarkDao.increment(packageName)
@@ -107,7 +126,7 @@ class AttentionRepository(
             yesterdayMinutes = yesterdayMinutes.takeIf { it > 0 },
             peakHourLabel = peakLabel,
             date = day,
-            hardTruth = settings.hardTruthMode,
+            tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
         )
         return DayInsights(receipt, sessions, hourly.toList(), message)
     }
@@ -132,24 +151,33 @@ class AttentionRepository(
         return WeekReport(days, total, previousMinutes)
     }
 
+    fun adFreePackages(): Set<String> = settings.adFreePackages
+
+    fun setAdFree(packageName: String, adFree: Boolean) = settings.setAdFree(packageName, adFree)
+
     /**
-     * Per-package calibrated ads/minute from the user's marks vs all tracked
-     * time. Packages without enough sampled time keep their default (no-op).
+     * Per-package ads/minute overrides applied on top of platform defaults:
+     *  - calibration from the user's "I saw an ad" marks vs tracked time, and
+     *  - a hard 0 for apps the user marked ad-free (Premium), so no ad value is
+     *    attributed even though their time is still shown.
      */
     private suspend fun personalRates(): Map<String, Double> {
-        val marks = adMarkDao.all()
-        if (marks.isEmpty()) return emptyMap()
-        val minutesByPackage = dao.secondsPerPackageAllTime()
-            .associate { it.packageName to it.totalSeconds / 60.0 }
         val rates = mutableMapOf<String, Double>()
-        for (mark in marks) {
-            val config = DefaultPlatforms.BY_PACKAGE[mark.packageName] ?: continue
-            rates[mark.packageName] = Calibration.effectiveAdsPerMinute(
-                config = config,
-                observedAds = mark.count,
-                observedMinutes = minutesByPackage[mark.packageName] ?: 0.0,
-            )
+        val marks = adMarkDao.all()
+        if (marks.isNotEmpty()) {
+            val minutesByPackage = dao.secondsPerPackageAllTime()
+                .associate { it.packageName to it.totalSeconds / 60.0 }
+            for (mark in marks) {
+                val config = DefaultPlatforms.BY_PACKAGE[mark.packageName] ?: continue
+                rates[mark.packageName] = Calibration.effectiveAdsPerMinute(
+                    config = config,
+                    observedAds = mark.count,
+                    observedMinutes = minutesByPackage[mark.packageName] ?: 0.0,
+                )
+            }
         }
+        // Ad-free (Premium) wins over any calibration: zero ads → zero value.
+        for (pkg in settings.adFreePackages) rates[pkg] = 0.0
         return rates
     }
 

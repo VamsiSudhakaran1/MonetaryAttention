@@ -26,32 +26,41 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-/** A titled surface card — the standard container for a content block. */
+/** An airy section: a quiet uppercase header over content — no surrounding box. */
 @Composable
 fun Section(
     title: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(18.dp),
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         if (title != null) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    title.uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
                 trailing?.invoke()
             }
         }
         content()
     }
+}
+
+/** A thin separator used between list rows instead of stacking cards. */
+@Composable
+fun HairlineDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)),
+    )
 }
 
 /**
@@ -96,15 +105,10 @@ fun ValueHero(valueRange: String, returnedLabel: String) {
     }
 }
 
-/** A compact metric tile (icon-free) for the secondary stats row. */
+/** A flat stat: a coloured figure with a quiet caption. No box. */
 @Composable
 fun MetricTile(value: String, label: String, accent: Color, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp),
-    ) {
+    Column(modifier = modifier) {
         Text(value, style = MaterialTheme.typography.displaySmall, color = accent)
         Spacer(Modifier.height(2.dp))
         Text(

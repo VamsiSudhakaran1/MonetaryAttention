@@ -1,6 +1,7 @@
 package com.attentionmirror
 
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.ShareCardText
 import com.attentionmirror.ui.AttentionApp
 import com.attentionmirror.ui.AttentionMirrorTheme
@@ -36,12 +38,30 @@ class MainActivity : ComponentActivity() {
                         val receipt = state.today ?: return@AttentionApp
                         val dateLabel = LocalDate.now()
                             .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+                        val tone = Copy.toneOf(state.hardTruthMode, state.quirkyMode)
                         ReceiptSharer.share(
                             this,
-                            ShareCardText.fromReceipt(receipt, dateLabel, state.hardTruthMode),
+                            ShareCardText.fromReceipt(receipt, dateLabel, tone),
                         )
                     },
                     onToggleHardTruth = { viewModel.setHardTruthMode(it) },
+                    onToggleQuirky = { viewModel.setQuirkyMode(it) },
+                    onPickNotificationTime = {
+                        TimePickerDialog(
+                            this,
+                            { _, hour, minute -> viewModel.setNotificationTime(hour, minute) },
+                            state.notificationHour,
+                            state.notificationMinute,
+                            false,
+                        ).show()
+                    },
+                    onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
+                    onOpenAdScanner = {
+                        startActivity(
+                            Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    },
                 )
             }
         }

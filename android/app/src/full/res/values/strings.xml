@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_label">Attention Mirror ad detection</string>
+    <string name="accessibility_desc">Counts on-screen “Sponsored” labels in supported apps to replace ad estimates with real counts. Runs on-device and stores only counts. You can turn it off anytime.</string>
+</resources>
