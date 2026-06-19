@@ -19,6 +19,9 @@ data class UiState(
     val loading: Boolean = true,
     val hasUsageAccess: Boolean = false,
     val hardTruthMode: Boolean = false,
+    val quirkyMode: Boolean = false,
+    val notificationHour: Int = 21,
+    val notificationMinute: Int = 30,
     val today: AttentionReceipt? = null,
     val message: DynamicMessage? = null,
     val sessions: List<UsageSession> = emptyList(),
@@ -48,6 +51,9 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
                 loading = false,
                 hasUsageAccess = true,
                 hardTruthMode = repo.hardTruthMode,
+                quirkyMode = repo.quirkyMode,
+                notificationHour = repo.notificationHour,
+                notificationMinute = repo.notificationMinute,
                 today = insights.receipt,
                 message = insights.message,
                 sessions = insights.sessions,
@@ -62,6 +68,16 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
     fun setHardTruthMode(enabled: Boolean) {
         repo.hardTruthMode = enabled
         // Rebuild so the message tone updates immediately.
+        refresh()
+    }
+
+    fun setQuirkyMode(enabled: Boolean) {
+        repo.quirkyMode = enabled
+        refresh()
+    }
+
+    fun setNotificationTime(hour: Int, minute: Int) {
+        repo.setNotificationTime(hour, minute)
         refresh()
     }
 

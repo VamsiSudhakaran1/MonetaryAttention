@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Calibration
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.DynamicMessage
 import com.attentionmirror.domain.DynamicMessages
@@ -11,8 +12,10 @@ import com.attentionmirror.domain.EstimateEngine
 import com.attentionmirror.domain.Formatting
 import com.attentionmirror.domain.Timeline
 import com.attentionmirror.domain.UsageSession
+import com.attentionmirror.notification.DailyReceiptScheduler
 import com.attentionmirror.tracking.UsageStatsCollector
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -55,6 +58,22 @@ class AttentionRepository(
         set(value) {
             settings.hardTruthMode = value
         }
+
+    var quirkyMode: Boolean
+        get() = settings.quirkyMode
+        set(value) {
+            settings.quirkyMode = value
+        }
+
+    val notificationHour: Int get() = settings.notificationHour
+    val notificationMinute: Int get() = settings.notificationMinute
+
+    /** Persist a new daily notification time and re-arm the scheduled work. */
+    fun setNotificationTime(hour: Int, minute: Int) {
+        settings.notificationHour = hour
+        settings.notificationMinute = minute
+        DailyReceiptScheduler.schedule(context, LocalTime.of(hour, minute))
+    }
 
     /** Record one user-marked ad, attributed to a tracked package. */
     suspend fun markAd(packageName: String) = adMarkDao.increment(packageName)
@@ -107,7 +126,7 @@ class AttentionRepository(
             yesterdayMinutes = yesterdayMinutes.takeIf { it > 0 },
             peakHourLabel = peakLabel,
             date = day,
-            hardTruth = settings.hardTruthMode,
+            tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
         )
         return DayInsights(receipt, sessions, hourly.toList(), message)
     }

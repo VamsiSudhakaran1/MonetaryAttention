@@ -23,12 +23,21 @@ object DynamicMessages {
         yesterdayMinutes: Double?,
         peakHourLabel: String?,
         date: LocalDate,
-        hardTruth: Boolean,
+        tone: Tone,
     ): DynamicMessage {
         val minutes = receipt.totalMinutes
         val rng = Random(date.toEpochDay())
 
-        if (minutes < 1.0) return choose(EMPTY, rng, receipt, peakHourLabel, hardTruth)
+        if (minutes < 1.0) return choose(EMPTY, rng, receipt, peakHourLabel, tone)
+
+        // Quirky has its own personality pool, regardless of the usage bucket.
+        if (tone == Tone.QUIRKY) {
+            val q = QUIRKY[rng.nextInt(QUIRKY.size)]
+            return DynamicMessage(
+                fill(q.first, receipt, peakHourLabel),
+                fill(q.second, receipt, peakHourLabel),
+            )
+        }
 
         val bucket = when {
             yesterdayMinutes != null && yesterdayMinutes >= 5 && minutes > yesterdayMinutes * 1.2 -> UP
@@ -38,7 +47,7 @@ object DynamicMessages {
             date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY -> WEEKEND
             else -> DEFAULT
         }
-        return choose(bucket, rng, receipt, peakHourLabel, hardTruth)
+        return choose(bucket, rng, receipt, peakHourLabel, tone)
     }
 
     private fun choose(
@@ -46,13 +55,15 @@ object DynamicMessages {
         rng: Random,
         receipt: AttentionReceipt,
         peakHourLabel: String?,
-        hardTruth: Boolean,
+        tone: Tone,
     ): DynamicMessage {
         val tmpl = bucket[rng.nextInt(bucket.size)]
         val headline = fill(tmpl.first, receipt, peakHourLabel)
-        val body =
-            if (hardTruth) HARD_TRUTH_TAILS[rng.nextInt(HARD_TRUTH_TAILS.size)]
-            else fill(tmpl.second, receipt, peakHourLabel)
+        val body = when (tone) {
+            Tone.HARD -> HARD_TRUTH_TAILS[rng.nextInt(HARD_TRUTH_TAILS.size)]
+            Tone.QUIRKY -> QUIRKY_TAILS[rng.nextInt(QUIRKY_TAILS.size)]
+            Tone.GENTLE -> fill(tmpl.second, receipt, peakHourLabel)
+        }
         return DynamicMessage(headline, body)
     }
 
@@ -114,5 +125,23 @@ object DynamicMessages {
         "You worked for the attention economy today. Unpaid.",
         "Your scrolling created value. You were paid ₹0.",
         "Someone billed for your time today. It wasn't you.",
+    )
+
+    // Quirky personality (opt-in). Cheeky, never mean.
+    private val QUIRKY = listOf(
+        "Congrats — you were the product again 🎉" to "{time} of scrolling = {value} for advertisers. Your cut: ₹0.",
+        "Your eyeballs had a busy day 👀" to "{ads} ads watched you back. {value} created. You? ₹0.",
+        "Unpaid internship at {top} 🧑‍💻" to "{time} clocked in today. Salary: {value}… to them.",
+        "The algorithm says thank you 🙏" to "{time} became {value}. You were paid in vibes.",
+        "Main character energy 🎬" to "Featured in ~{ads} ads. Box office: {value}. Your royalties: ₹0.",
+        "Doomscroll speedrun complete 🏃" to "{time} logged. {value} generated for the house.",
+        "Your attention went shopping 🛍️" to "Spent {time}, made {value} for others, came back with ₹0.",
+        "Free labour, premium vibes ✨" to "{ads} ads, {value} of value, all paid in dopamine.",
+    )
+
+    private val QUIRKY_TAILS = listOf(
+        "You did unpaid overtime for the algorithm. 💸",
+        "Tip jar for your attention: still ₹0. 🫥",
+        "The feed thanks you for your service. 🫡",
     )
 }

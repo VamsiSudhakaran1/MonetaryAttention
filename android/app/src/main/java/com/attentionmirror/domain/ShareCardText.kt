@@ -16,7 +16,7 @@ data class ShareCardText(
         fun fromReceipt(
             receipt: AttentionReceipt,
             dateLabel: String,
-            hardTruth: Boolean,
+            tone: Tone,
         ): ShareCardText = ShareCardText(
             title = "My Unpaid Attention",
             dateLabel = dateLabel,
@@ -29,7 +29,7 @@ data class ShareCardText(
                 ) to "value created",
                 "₹${receipt.userReceivedInr}" to "returned to me",
             ),
-            conclusion = Copy.tagline(hardTruth),
+            conclusion = Copy.tagline(tone),
             footer = "Attention Mirror · estimated",
         )
     }

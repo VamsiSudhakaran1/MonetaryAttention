@@ -217,7 +217,7 @@ private val PaperRule = Color(0x331B1B1B)
 fun ReceiptScreen(
     receipt: AttentionReceipt?,
     dateLabel: String,
-    hardTruthMode: Boolean,
+    tone: com.attentionmirror.domain.Tone,
     onShare: () -> Unit,
 ) {
     ScreenColumn {
@@ -263,7 +263,7 @@ fun ReceiptScreen(
             DashedDivider(PaperRule)
             Spacer(Modifier.height(14.dp))
 
-            PaperCenter(Copy.conclusion(hardTruthMode), size = 14.sp, color = Brand.Coral, bold = true)
+            PaperCenter(Copy.conclusion(tone), size = 14.sp, color = Brand.Coral, bold = true)
             Spacer(Modifier.height(14.dp))
             PaperCenter("* all values are estimates *", size = 11.sp, color = PaperMuted)
         }
@@ -406,6 +406,11 @@ fun ReportsScreen(week: WeekReport?) {
 fun SettingsScreen(
     hardTruthMode: Boolean,
     onToggleHardTruth: (Boolean) -> Unit,
+    quirkyMode: Boolean,
+    onToggleQuirky: (Boolean) -> Unit,
+    notificationHour: Int,
+    notificationMinute: Int,
+    onPickNotificationTime: () -> Unit,
     monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
     adFreePackages: Set<String>,
     onToggleAdFree: (String, Boolean) -> Unit,
@@ -414,7 +419,27 @@ fun SettingsScreen(
     ScreenColumn {
         Text("Settings", style = MaterialTheme.typography.headlineSmall)
 
-        Section {
+        Section(title = "Daily receipt") {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                    Text("Notification time", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "When your end-of-day receipt arrives.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Button(onClick = onPickNotificationTime) {
+                    Text(Formatting.timeOfDay(notificationHour, notificationMinute))
+                }
+            }
+        }
+
+        Section(title = "Tone") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -429,6 +454,22 @@ fun SettingsScreen(
                     )
                 }
                 Switch(checked = hardTruthMode, onCheckedChange = onToggleHardTruth)
+            }
+            HairlineDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                    Text("Quirky mode", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Cheeky, funnier wording. Overrides hard truth.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(checked = quirkyMode, onCheckedChange = onToggleQuirky)
             }
         }
 

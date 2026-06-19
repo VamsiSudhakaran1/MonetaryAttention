@@ -12,6 +12,7 @@ import androidx.work.WorkerParameters
 import com.attentionmirror.MainActivity
 import com.attentionmirror.R
 import com.attentionmirror.data.AttentionRepository
+import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.DynamicMessages
 import com.attentionmirror.domain.Formatting
 import java.time.LocalDate
@@ -39,7 +40,7 @@ class DailyReceiptWorker(
             yesterdayMinutes = null,
             peakHourLabel = null,
             date = LocalDate.now(),
-            hardTruth = repo.hardTruthMode,
+            tone = Copy.toneOf(repo.hardTruthMode, repo.quirkyMode),
         )
 
         postNotification(
