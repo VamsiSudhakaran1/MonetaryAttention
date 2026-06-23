@@ -38,7 +38,10 @@ supported apps to improve estimate accuracy. It is:
 
 - **off by default** and must be explicitly enabled in system Accessibility settings,
 - restricted to the apps already tracked,
-- reads only whether an ad marker is present and stores **only counts**, on-device,
+- reads only whether an ad marker is present, and stores **only**: the app, the
+  matched marker keyword (e.g. "sponsored"), and each ad's on-screen start/end
+  times (to report count, how long it showed, and frequency) — never any other
+  screen content, on-device,
 - **never shipped to Google Play** (Play distributes the privacy-pure build).
 
 If you use the Play build, none of this applies — there is no Accessibility

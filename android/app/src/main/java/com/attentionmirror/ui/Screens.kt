@@ -87,6 +87,7 @@ fun HomeScreen(
     message: DynamicMessage?,
     sessions: List<UsageSession>,
     hourly: List<Long>,
+    adDetails: List<com.attentionmirror.domain.AdDetail>,
     dateLabel: String,
     onShare: () -> Unit,
 ) {
@@ -174,6 +175,17 @@ fun HomeScreen(
             }
         }
 
+        if (adDetails.isNotEmpty()) {
+            Section(title = "Ads detected") {
+                adDetails.forEachIndexed { i, ad ->
+                    if (i > 0) HairlineDivider()
+                    AdDetailRow(ad)
+                }
+                Spacer(Modifier.height(8.dp))
+                EstimateNote("Measured on-device by the opt-in ad scanner.")
+            }
+        }
+
         if (sessions.isNotEmpty()) {
             Section(title = "Sessions today") {
                 sessions.sortedByDescending { it.startMillis }.take(8).forEachIndexed { i, s ->
@@ -187,6 +199,36 @@ fun HomeScreen(
             Icon(Icons.Filled.IosShare, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Share my attention receipt")
+        }
+    }
+}
+
+@Composable
+private fun AdDetailRow(ad: com.attentionmirror.domain.AdDetail) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AppAvatar(ad.packageName, 36.dp)
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(ad.platform, style = MaterialTheme.typography.titleMedium)
+                Text("${ad.count} ads", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "%.1f/min · %ds on screen · ~%ds each".format(
+                    ad.adsPerMinute,
+                    ad.totalAdSeconds,
+                    ad.avgAdSeconds.toInt(),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

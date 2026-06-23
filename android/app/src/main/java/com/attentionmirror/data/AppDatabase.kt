@@ -5,10 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [UsageRecord::class, AdMark::class], version = 2, exportSchema = false)
+@Database(
+    entities = [UsageRecord::class, AdMark::class, AdSighting::class],
+    version = 3,
+    exportSchema = false,
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun usageDao(): UsageDao
     abstract fun adMarkDao(): AdMarkDao
+    abstract fun adSightingDao(): AdSightingDao
 
     companion object {
         @Volatile

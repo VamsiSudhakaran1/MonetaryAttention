@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.attentionmirror.data.AttentionRepository
 import com.attentionmirror.data.WeekReport
+import com.attentionmirror.domain.AdDetail
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.DynamicMessage
@@ -26,6 +27,7 @@ data class UiState(
     val message: DynamicMessage? = null,
     val sessions: List<UsageSession> = emptyList(),
     val hourly: List<Long> = emptyList(),
+    val adDetails: List<AdDetail> = emptyList(),
     val week: WeekReport? = null,
     val monetizedPlatforms: List<PlatformConfig> = emptyList(),
     val adFreePackages: Set<String> = emptySet(),
@@ -58,6 +60,7 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
                 message = insights.message,
                 sessions = insights.sessions,
                 hourly = insights.hourlySeconds,
+                adDetails = repo.adDetailsForDay(),
                 week = repo.weekReport(),
                 monetizedPlatforms = DefaultPlatforms.ALL.filter { it.monetized },
                 adFreePackages = repo.adFreePackages(),

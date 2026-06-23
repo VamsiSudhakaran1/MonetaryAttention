@@ -2,6 +2,7 @@ package com.attentionmirror.data
 
 import android.content.Context
 import android.content.pm.PackageManager
+import com.attentionmirror.domain.AdDetail
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Calibration
 import com.attentionmirror.domain.Copy
@@ -45,6 +46,7 @@ class AttentionRepository(
     private val context: Context,
     private val dao: UsageDao,
     private val adMarkDao: AdMarkDao,
+    private val adSightingDao: AdSightingDao,
     private val collector: UsageStatsCollector,
     private val settings: SettingsStore,
 ) {
@@ -131,6 +133,28 @@ class AttentionRepository(
         return DayInsights(receipt, sessions, hourly.toList(), message)
     }
 
+    /**
+     * Per-app ad reporting from the opt-in scanner (count, on-screen time,
+     * frequency). Empty in the Play build (no scanner) or before any detections.
+     */
+    suspend fun adDetailsForDay(day: LocalDate = LocalDate.now()): List<AdDetail> {
+        val stats = adSightingDao.statsForDay(day.format(isoDate))
+        if (stats.isEmpty()) return emptyList()
+        val minutesByPackage = dao.secondsForDay(day.format(isoDate))
+            .associate { it.packageName to it.totalSeconds / 60.0 }
+        return stats.map { s ->
+            val minutes = minutesByPackage[s.packageName] ?: 0.0
+            AdDetail(
+                packageName = s.packageName,
+                platform = DefaultPlatforms.BY_PACKAGE[s.packageName]?.platform ?: s.packageName,
+                count = s.count,
+                totalAdSeconds = s.totalSeconds,
+                avgAdSeconds = if (s.count > 0) s.totalSeconds.toDouble() / s.count else 0.0,
+                adsPerMinute = if (minutes > 0) s.count / minutes else 0.0,
+            )
+        }.sortedByDescending { it.count }
+    }
+
     /** A 7-day report ending on [endDay], with the prior week for trend. */
     suspend fun weekReport(endDay: LocalDate = LocalDate.now()): WeekReport {
         val start = endDay.minusDays(6)
@@ -198,6 +222,7 @@ class AttentionRepository(
                 app,
                 db.usageDao(),
                 db.adMarkDao(),
+                db.adSightingDao(),
                 UsageStatsCollector(app),
                 SettingsStore(app),
             )

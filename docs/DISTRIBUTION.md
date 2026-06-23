@@ -77,13 +77,23 @@ Play data-safety/permissions notes for the `play` flavor:
 - The `play` flavor contains **no** AccessibilityService, so there's nothing to
   declare there.
 
-## 4. The `full` flavor's ad scanner
+## 4. The `full` flavor's ad scanner (external download)
 
-The opt-in `AdScannerService` counts on-screen ad markers ("Sponsored",
-"Promoted", "Paid partnership") in the tracked apps and records a count, which
-feeds the same calibration the manual "I saw an ad" tile uses — so estimates
-become real per-user ad rates (e.g. Reels' high ad load).
+The `full` build is distributed **outside Google Play** (signed APK / GitHub
+Release) for users who opt into richer, more accurate ad reporting.
+
+The opt-in `AdScannerService` watches the tracked apps for on-screen ad markers
+("Sponsored", "Promoted", "Paid partnership") and records, **per ad**:
+
+- **which** ad/app and the matched marker keyword,
+- **how long** it was on screen (appearance → disappearance), and
+- **how frequently** ads appear (derived: ads/min vs tracked time).
+
+This shows up in an **"Ads detected"** section (count · on-screen seconds · avg
+duration · ads/min) and also feeds the same calibration the manual "I saw an ad"
+tile uses, so estimates become real per-user ad rates (e.g. Reels' high load).
 
 - Off by default; the user enables it in **Settings → Accessibility**.
 - Restricted to tracked packages (`res/xml/accessibility_config.xml`).
-- Reads only whether a marker is present; stores only counts, on-device.
+- Stores only the app, marker keyword, and start/end times — never other screen
+  content. Everything on-device. See [PRIVACY.md](PRIVACY.md).
