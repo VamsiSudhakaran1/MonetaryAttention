@@ -4,6 +4,8 @@ import os
 # the app (and its lifespan) never creates a stray file. Tests use their own
 # isolated engine via the dependency override below.
 os.environ.setdefault("DATABASE_URL", "sqlite://")
+# Configure the write-endpoint API key for tests; the client sends it by default.
+os.environ.setdefault("ADMIN_API_KEY", "test-key")
 
 import pytest
 from fastapi.testclient import TestClient
@@ -48,7 +50,7 @@ def client():
     app.dependency_overrides[get_db] = override_get_db
     # The app's lifespan also seeds the *real* DB; we don't enter it here, so
     # use the client without triggering startup against the file DB.
-    with TestClient(app) as c:
+    with TestClient(app, headers={"X-API-Key": "test-key"}) as c:
         yield c
     app.dependency_overrides.clear()
     Base.metadata.drop_all(bind=engine)

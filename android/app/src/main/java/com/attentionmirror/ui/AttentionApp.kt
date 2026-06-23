@@ -102,6 +102,7 @@ fun AttentionApp(
                     message = state.message,
                     sessions = state.sessions,
                     hourly = state.hourly,
+                    adDetails = state.adDetails,
                     dateLabel = dateLabel,
                     onShare = onShareReceipt,
                 )

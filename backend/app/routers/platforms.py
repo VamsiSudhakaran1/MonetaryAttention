@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from ..auth import require_api_key
 from ..db import get_db
 from ..orm import PlatformConfigRow
 from ..schemas import PlatformConfigIn, PlatformConfigOut
@@ -17,7 +18,11 @@ def list_platforms(db: Session = Depends(get_db)):
     return db.query(PlatformConfigRow).order_by(PlatformConfigRow.platform).all()
 
 
-@router.put("/{package_name}", response_model=PlatformConfigOut)
+@router.put(
+    "/{package_name}",
+    response_model=PlatformConfigOut,
+    dependencies=[Depends(require_api_key)],
+)
 def upsert_platform(
     package_name: str, body: PlatformConfigIn, db: Session = Depends(get_db)
 ):
@@ -40,7 +45,11 @@ def upsert_platform(
     return row
 
 
-@router.delete("/{package_name}", status_code=204)
+@router.delete(
+    "/{package_name}",
+    status_code=204,
+    dependencies=[Depends(require_api_key)],
+)
 def delete_platform(package_name: str, db: Session = Depends(get_db)):
     row = db.get(PlatformConfigRow, package_name)
     if row is None:

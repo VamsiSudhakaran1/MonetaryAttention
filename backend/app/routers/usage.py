@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from .. import service
+from ..auth import require_api_key
 from ..db import get_db
 from ..orm import UsageEventRow
 from ..schemas import (
@@ -18,7 +19,7 @@ from ..schemas import (
 router = APIRouter(tags=["usage"])
 
 
-@router.post("/usage", status_code=202)
+@router.post("/usage", status_code=202, dependencies=[Depends(require_api_key)])
 def ingest_usage(batch: UsageBatchIn, db: Session = Depends(get_db)):
     """Upsert one row per (user, package, day). Idempotent by latest value."""
     for event in batch.events:

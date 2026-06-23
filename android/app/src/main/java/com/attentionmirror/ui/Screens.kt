@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -19,7 +21,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +87,7 @@ fun HomeScreen(
     message: DynamicMessage?,
     sessions: List<UsageSession>,
     hourly: List<Long>,
+    adDetails: List<com.attentionmirror.domain.AdDetail>,
     dateLabel: String,
     onShare: () -> Unit,
 ) {
@@ -167,6 +175,17 @@ fun HomeScreen(
             }
         }
 
+        if (adDetails.isNotEmpty()) {
+            Section(title = "Ads detected") {
+                adDetails.forEachIndexed { i, ad ->
+                    if (i > 0) HairlineDivider()
+                    AdDetailRow(ad)
+                }
+                Spacer(Modifier.height(8.dp))
+                EstimateNote("Measured on-device by the opt-in ad scanner.")
+            }
+        }
+
         if (sessions.isNotEmpty()) {
             Section(title = "Sessions today") {
                 sessions.sortedByDescending { it.startMillis }.take(8).forEachIndexed { i, s ->
@@ -180,6 +199,36 @@ fun HomeScreen(
             Icon(Icons.Filled.IosShare, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Share my attention receipt")
+        }
+    }
+}
+
+@Composable
+private fun AdDetailRow(ad: com.attentionmirror.domain.AdDetail) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AppAvatar(ad.packageName, 36.dp)
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(ad.platform, style = MaterialTheme.typography.titleMedium)
+                Text("${ad.count} ads", style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                "%.1f/min · %ds on screen · ~%ds each".format(
+                    ad.adsPerMinute,
+                    ad.totalAdSeconds,
+                    ad.avgAdSeconds.toInt(),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -268,10 +317,60 @@ fun ReceiptScreen(
             PaperCenter("* all values are estimates *", size = 11.sp, color = PaperMuted)
         }
 
+        HowCalculated(receipt)
+
         Button(onClick = onShare, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.IosShare, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Share receipt")
+        }
+    }
+}
+
+/** Expandable transparency panel: shows the working behind each estimate. */
+@Composable
+private fun HowCalculated(receipt: AttentionReceipt) {
+    var expanded by remember { mutableStateOf(false) }
+    Section {
+        Row(
+            modifier = Modifier.fillMaxWidth().clickable { expanded = !expanded },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("How was this calculated?", style = MaterialTheme.typography.titleMedium)
+            Icon(
+                if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                contentDescription = null,
+            )
+        }
+        if (expanded) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Your time × a typical ad rate × a CPM range. Always a range, never exact.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            receipt.perPlatform.filter { it.minutes >= 1.0 }.forEach { p ->
+                val config = com.attentionmirror.domain.DefaultPlatforms.BY_PACKAGE[p.packageName]
+                val perMin = if (p.minutes > 0) p.estimatedAdsSeen / p.minutes else 0.0
+                Spacer(Modifier.height(12.dp))
+                Text(p.platform, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "${Formatting.minutes(p.minutes)} × ~%.2f ads/min ≈ ${p.estimatedAdsSeen} ads".format(perMin),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    if (config != null && p.estimatedAdsSeen > 0) {
+                        "× ₹${config.lowCpmInr.toInt()}–₹${config.highCpmInr.toInt()} CPM ÷ 1000 = " +
+                            Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt())
+                    } else {
+                        "ad-free / not monetized → ₹0"
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }

@@ -23,6 +23,23 @@ def test_tune_platform_config(client):
     assert r.json()["ads_per_minute"] == 1.0
 
 
+def test_write_endpoints_require_api_key(client):
+    body = {
+        "package_name": "com.google.android.youtube",
+        "platform": "YouTube",
+        "ads_per_minute": 1.0,
+        "low_cpm_inr": 300,
+        "high_cpm_inr": 900,
+        "monetized": True,
+    }
+    # Wrong key -> 401 on writes...
+    bad = {"X-API-Key": "nope"}
+    assert client.put("/platforms/com.google.android.youtube", json=body, headers=bad).status_code == 401
+    assert client.post("/usage", json={"user_id": "u", "events": []}, headers=bad).status_code == 401
+    # ...but reads stay public.
+    assert client.get("/platforms", headers=bad).status_code == 200
+
+
 def test_bad_cpm_rejected(client):
     body = {
         "package_name": "com.x",
