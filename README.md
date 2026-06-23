@@ -1,45 +1,54 @@
 # Attention Mirror (MonetaryAttention)
 
-**See who profited from your scrolling.**
+**Existing digital-wellbeing apps show how much time you lost. Attention Mirror
+shows who gained from it.**
 
-A digital well-being app that doesn't just show how much time you spent — it
-shows the monetizable attention value others likely earned from it, and how much
-came back to you (₹0).
+Every night it shows your **unpaid attention receipt**: the time you spent on
+monetized apps, the ads you likely saw, the **estimated** value others made from
+your attention — and the ₹0 that came back to you.
 
-> Existing digital well-being apps say *"you spent 3 hours on your phone."*
-> Attention Mirror says *"you spent 3 hours on platforms that monetize you, you
-> likely generated ₹X in ad value, and you received ₹0."*
+> No spying. No screen reading. No account. Your data stays on your phone.
 
-Every value here is a **transparent estimate**, never a claim. We do not detect
-real ads or exact rupee amounts — we estimate from app-usage time and tunable,
-documented per-platform assumptions. See
-[`docs/ESTIMATE_SPEC.md`](docs/ESTIMATE_SPEC.md).
+Every value is a **transparent estimate** shown as a range (e.g. *₹18–₹42*),
+never an exact revenue claim. See [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md) and
+[docs/ESTIMATE_SPEC.md](docs/ESTIMATE_SPEC.md).
 
-## What's in this repo
+## The privacy promise
 
-| Path        | What it is                                                         |
-|-------------|--------------------------------------------------------------------|
-| `android/`  | Native Kotlin + Jetpack Compose MVP app (tracking, receipts, notif)|
-| `backend/`  | FastAPI service: tunable platform config + receipt/summary API     |
-| `docs/`     | `ESTIMATE_SPEC.md` — the canonical math, shared by both            |
+- In the Play build we **do not** read messages, screenshots, screen content, or
+  use Accessibility — only **aggregate per-app time** via `UsageStatsManager`.
+- **On-device by default**: the app declares **no `INTERNET` permission** and has
+  no networking code, so it cannot upload your usage.
 
-The estimate math is implemented **twice** (Python in the backend, Kotlin in the
-app) and kept in lockstep with the spec. Both implementations are tested and
-verified to produce identical output for the same inputs.
+Full details: [docs/PRIVACY.md](docs/PRIVACY.md).
 
-## The MVP promise
+## What it does (Android)
 
-Every night, an **Attention Receipt**:
+- Daily **Attention Receipt** computed on-device, with Home / Reports / Receipt
+  screens: app icons, an hour-by-hour timeline, and a weekly report.
+- **Daily receipt notification** at a time you choose, with dynamic,
+  non-repeating copy (Gentle / Hard-truth / Quirky tones).
+- **Shareable receipt card** (PNG) — the viral hook.
+- Accuracy controls: **ad-free/Premium toggles** and a manual **"I saw an ad"**
+  calibration tile.
+
+## Build flavors
+
+| Flavor | Ad detection | Where |
+|---|---|---|
+| `play` | estimates + Premium toggles + manual calibration | Google Play |
+| `full` | adds an **opt-in** Accessibility ad-scanner (off by default) | sideload / Release only — **not Play** |
+
+The privacy-pure `play` build is the hero product; `full` is for power users who
+explicitly want real ad counts. See [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md).
+
+## Repo layout
 
 ```
-ATTENTION RECEIPT — 17 June 2026
-
-Time spent:    YouTube 1h 12m · Facebook 48m · Instagram 34m
-Estimated ads seen:        46
-Estimated value created:   ₹10–₹31
-Amount returned to you:    ₹0
-
-Your time created monetizable attention. You were paid with distraction.
+android/   Kotlin + Jetpack Compose app (play & full flavors)
+backend/   FastAPI: read-only config (GET /platforms) + API-key-guarded admin/ingest
+ios/       Portable Swift estimate engine + plan (built after Android is live)
+docs/      ESTIMATE_SPEC, PRIVACY, ASSUMPTIONS, DISTRIBUTION, PLAY_STORE_NOTES, IOS
 ```
 
 ## Quick start
@@ -50,31 +59,30 @@ Your time created monetizable attention. You were paid with distraction.
 cd backend
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
-pytest -q                 # 12 tests
-uvicorn app.main:app --reload
+pytest -q
+uvicorn app.main:app --reload      # GET /platforms is public; writes need X-API-Key
 ```
 
 **Android** (requires Android SDK):
 
 ```bash
 cd android
-./gradlew :app:assembleDebug
-./gradlew :app:testDebugUnitTest
+./gradlew :app:assemblePlayDebug          # Play-safe build
+./gradlew :app:testPlayDebugUnitTest
 ```
 
-See [`backend/README.md`](backend/README.md) and
-[`android/README.md`](android/README.md) for details.
+## The math
 
-## Privacy & policy stance
+One formula, three implementations kept in sync (Python, Kotlin, Swift):
 
-The MVP tracks only **aggregate per-app foreground time** via Android's
-`UsageStatsManager`. It does **not** read screen content, messages, or use
-screen capture / Accessibility APIs — those are sensitive under Google Play
-policy. Ad counts are honest estimates, shown as ranges.
+```
+minutes  = duration_seconds / 60
+ads_seen = round(minutes × ads_per_minute)
+value    = ads_seen × CPM / 1000     # at low and high CPM → a range
+```
 
 ## Status
 
-This is the MVP scaffold: usage tracking, the estimate engine, daily receipt
-notification, the three core screens, and a tunable backend. Not yet included
-(deliberately): wallets, sponsors, surveys, marketplace, on-device ad detection,
-shareable image cards. Those come later.
+Pre-release, heading to **v0.1-alpha** (Android, Play-safe). See
+[ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md). CI builds both Android
+flavors and runs backend + unit tests on every push.
