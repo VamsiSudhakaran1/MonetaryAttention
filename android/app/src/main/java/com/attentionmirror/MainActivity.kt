@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.attentionmirror.R
 import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.ShareCardText
 import com.attentionmirror.ui.AttentionApp
@@ -56,6 +57,8 @@ class MainActivity : ComponentActivity() {
                         ).show()
                     },
                     onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
+                    onMarkAd = { pkg -> viewModel.markAd(pkg) },
+                    onAddAdTile = { requestAddAdTile() },
                     onOpenAdScanner = {
                         startActivity(
                             Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
@@ -65,6 +68,26 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    /** Android 13+: prompt the system to add the "I saw an ad" Quick Settings tile. */
+    private fun requestAddAdTile() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+            android.widget.Toast.makeText(
+                this,
+                "Add the \"I saw an ad\" tile from your Quick Settings edit screen.",
+                android.widget.Toast.LENGTH_LONG,
+            ).show()
+            return
+        }
+        val sbm = getSystemService(android.app.StatusBarManager::class.java)
+        sbm.requestAddTileService(
+            android.content.ComponentName(this, com.attentionmirror.tracking.AdMarkTileService::class.java),
+            getString(R.string.tile_label),
+            android.graphics.drawable.Icon.createWithResource(this, R.drawable.ic_stat_receipt),
+            { it.run() },
+            { },
+        )
     }
 
     override fun onResume() {

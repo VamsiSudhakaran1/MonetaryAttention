@@ -88,4 +88,12 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
         repo.setAdFree(packageName, adFree)
         refresh()
     }
+
+    /** Record one manually-marked ad for a package (in-app calibration). */
+    fun markAd(packageName: String) {
+        viewModelScope.launch {
+            repo.markAd(packageName)
+            refresh()
+        }
+    }
 }

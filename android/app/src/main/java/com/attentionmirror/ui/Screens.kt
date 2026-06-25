@@ -1,5 +1,6 @@
 package com.attentionmirror.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -513,6 +515,8 @@ fun SettingsScreen(
     monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
     adFreePackages: Set<String>,
     onToggleAdFree: (String, Boolean) -> Unit,
+    onMarkAd: (String) -> Unit,
+    onAddAdTile: () -> Unit,
     onOpenAdScanner: () -> Unit,
 ) {
     ScreenColumn {
@@ -618,14 +622,53 @@ fun SettingsScreen(
         }
 
         Section(title = "Calibrate ad counting") {
+            val context = LocalContext.current
             Text(
-                "Add the \"I saw an ad\" Quick Settings tile, then tap it whenever " +
-                    "you spot an ad while scrolling. After ~15 minutes on a platform " +
-                    "your real ad frequency replaces our default estimate. Nothing " +
-                    "leaves your device.",
+                "Saw an ad? Tap the app below. After ~15 minutes on a platform your " +
+                    "real ad frequency replaces our default estimate. Nothing leaves " +
+                    "your device.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            monetizedPlatforms.forEachIndexed { i, p ->
+                if (i > 0) HairlineDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onMarkAd(p.packageName)
+                            Toast.makeText(
+                                context,
+                                "Recorded an ad for ${p.platform}",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        }
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AppAvatar(p.packageName, 32.dp)
+                        Spacer(Modifier.width(12.dp))
+                        Text(p.platform, style = MaterialTheme.typography.titleMedium)
+                    }
+                    Text(
+                        "+ ad",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "Prefer a shortcut? Add the \"I saw an ad\" Quick Settings tile so you " +
+                    "can tap it without opening the app.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            Spacer(Modifier.height(8.dp))
+            Button(onClick = onAddAdTile) { Text("Add Quick Settings tile") }
         }
 
         Section(title = "How we estimate") {

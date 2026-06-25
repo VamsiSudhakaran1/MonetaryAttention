@@ -46,6 +46,8 @@ fun AttentionApp(
     onToggleQuirky: (Boolean) -> Unit,
     onPickNotificationTime: () -> Unit,
     onToggleAdFree: (String, Boolean) -> Unit,
+    onMarkAd: (String) -> Unit,
+    onAddAdTile: () -> Unit,
     onOpenAdScanner: () -> Unit,
 ) {
     if (state.loading) {
@@ -124,6 +126,8 @@ fun AttentionApp(
                     monetizedPlatforms = state.monetizedPlatforms,
                     adFreePackages = state.adFreePackages,
                     onToggleAdFree = onToggleAdFree,
+                    onMarkAd = onMarkAd,
+                    onAddAdTile = onAddAdTile,
                     onOpenAdScanner = onOpenAdScanner,
                 )
             }
