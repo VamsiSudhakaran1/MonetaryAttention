@@ -58,16 +58,16 @@ deliberately conservative; tune in the backend, not in the app.
 
 | Platform   | Package                          | ads/min | low CPM | high CPM |
 |------------|----------------------------------|---------|---------|----------|
-| YouTube    | com.google.android.youtube       | 0.20    | 250     | 800      |
-| Facebook   | com.facebook.katana              | 0.35    | 200     | 600      |
-| Instagram  | com.instagram.android            | 0.45    | 220     | 650      |
-| X          | com.twitter.android              | 0.30    | 150     | 450      |
-| Reddit     | com.reddit.frontpage             | 0.25    | 120     | 400      |
-| Snapchat   | com.snapchat.android             | 0.30    | 150     | 450      |
-| ShareChat  | in.mohalla.sharechat             | 0.40    | 80      | 300      |
-| Moj        | in.mohalla.video                 | 0.50    | 80      | 300      |
-| Josh       | com.eterno.shortvideos           | 0.50    | 80      | 300      |
-| Chrome     | com.android.chrome               | 0.10    | 100     | 350      |
+| YouTube    | com.google.android.youtube       | 0.20    | 310     | 980      |
+| Facebook   | com.facebook.katana              | 0.35    | 250     | 730      |
+| Instagram  | com.instagram.android            | 0.45    | 270     | 800      |
+| X          | com.twitter.android              | 0.30    | 185     | 550      |
+| Reddit     | com.reddit.frontpage             | 0.25    | 150     | 490      |
+| Snapchat   | com.snapchat.android             | 0.30    | 185     | 550      |
+| ShareChat  | in.mohalla.sharechat             | 0.40    | 100     | 370      |
+| Moj        | in.mohalla.video                 | 0.50    | 100     | 370      |
+| Josh       | com.eterno.shortvideos           | 0.50    | 100     | 370      |
+| Chrome     | com.android.chrome               | 0.10    | 125     | 430      |
 
 WhatsApp (`com.whatsapp`) is tracked for **time only** and never contributes
 attention value.
@@ -77,13 +77,13 @@ attention value.
 YouTube 72m, Facebook 48m, Instagram 34m:
 
 ```
-YouTube:   72 * 0.20 = 14.4 -> 14 ads  -> 14*250/1000=3.50 .. 14*800/1000=11.20
-Facebook:  48 * 0.35 = 16.8 -> 17 ads  -> 17*200/1000=3.40 .. 17*600/1000=10.20
-Instagram: 34 * 0.45 = 15.3 -> 15 ads  -> 15*220/1000=3.30 .. 15*650/1000=9.75
+YouTube:   72 * 0.20 = 14.4 -> 14 ads  -> 14*310/1000=4.34 .. 14*980/1000=13.72
+Facebook:  48 * 0.35 = 16.8 -> 17 ads  -> 17*250/1000=4.25 .. 17*730/1000=12.41
+Instagram: 34 * 0.45 = 15.3 -> 15 ads  -> 15*270/1000=4.05 .. 15*800/1000=12.00
 
 total_ads = 46
-value_low  = round(10.20) = 10
-value_high = round(31.15) = 31
+value_low  = round(12.64) = 13
+value_high = round(38.13) = 38
 ```
 
 The numbers in the original mockups ("₹18–₹42") were illustrative; the engine
