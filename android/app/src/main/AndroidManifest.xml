@@ -52,6 +52,11 @@
             </intent-filter>
         </receiver>
 
+        <!-- Daily receipt alarm: fires the worker at the user's chosen time. -->
+        <receiver
+            android:name=".notification.ReceiptAlarmReceiver"
+            android:exported="false" />
+
         <!-- Quick Settings tile: "I saw an ad" for user-assisted calibration. -->
         <service
             android:name=".tracking.AdMarkTileService"

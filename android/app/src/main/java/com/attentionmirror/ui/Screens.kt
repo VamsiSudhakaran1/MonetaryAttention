@@ -681,6 +681,7 @@ fun SettingsScreen(
     notificationHour: Int,
     notificationMinute: Int,
     onPickNotificationTime: () -> Unit,
+    onSendTestReceipt: () -> Unit,
     monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
     adFreePackages: Set<String>,
     onToggleAdFree: (String, Boolean) -> Unit,
@@ -708,6 +709,22 @@ fun SettingsScreen(
                 Button(onClick = onPickNotificationTime) {
                     Text(Formatting.timeOfDay(notificationHour, notificationMinute))
                 }
+            }
+            Spacer(Modifier.height(10.dp))
+            HairlineDivider()
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "Send one now to check notifications work.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f).padding(end = 12.dp),
+                )
+                Button(onClick = onSendTestReceipt) { Text("Test") }
             }
         }
 

@@ -1,13 +1,19 @@
 package com.attentionmirror
 
+import android.Manifest
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import com.attentionmirror.notification.DailyReceiptWorker
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.attentionmirror.R
@@ -25,8 +31,12 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: AttentionViewModel by viewModels()
 
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op */ }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestNotificationPermissionIfNeeded()
         setContent {
             val state by viewModel.state.collectAsState()
             AttentionMirrorTheme {
@@ -48,12 +58,22 @@ class MainActivity : ComponentActivity() {
                     onToggleHardTruth = { viewModel.setHardTruthMode(it) },
                     onToggleQuirky = { viewModel.setQuirkyMode(it) },
                     onPickNotificationTime = {
+                        requestNotificationPermissionIfNeeded()
                         TimePickerDialog(
                             this,
                             { _, hour, minute -> viewModel.setNotificationTime(hour, minute) },
                             state.notificationHour,
                             state.notificationMinute,
                             false,
+                        ).show()
+                    },
+                    onSendTestReceipt = {
+                        requestNotificationPermissionIfNeeded()
+                        DailyReceiptWorker.runNow(this)
+                        android.widget.Toast.makeText(
+                            this,
+                            "Test receipt sent — check your notifications.",
+                            android.widget.Toast.LENGTH_SHORT,
                         ).show()
                     },
                     onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
@@ -68,6 +88,16 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    /** Android 13+: ask for notification permission so the daily receipt can show. */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS,
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!granted) notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     /** Android 13+: prompt the system to add the "I saw an ad" Quick Settings tile. */

@@ -27,21 +27,29 @@ class DailyReceiptWorker(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
+        val isTest = inputData.getBoolean(KEY_TEST, false)
         val repo = AttentionRepository.create(applicationContext)
-        if (!repo.hasUsageAccess()) return Result.success()
+        if (!repo.hasUsageAccess() && !isTest) return Result.success()
 
-        repo.refresh()
+        if (repo.hasUsageAccess()) repo.refresh()
         val receipt = repo.dailyReceipt()
-        if (receipt.totalMinutes <= 0) return Result.success()
+        if (receipt.totalMinutes <= 0 && !isTest) return Result.success()
 
-        // A fresh, day-specific message so the notification never repeats.
-        val message = DynamicMessages.forDay(
-            receipt = receipt,
-            yesterdayMinutes = null,
-            peakHourLabel = null,
-            date = LocalDate.now(),
-            tone = Copy.toneOf(repo.hardTruthMode, repo.quirkyMode),
-        )
+        val message = if (receipt.totalMinutes > 0) {
+            // A fresh, day-specific message so the notification never repeats.
+            DynamicMessages.forDay(
+                receipt = receipt,
+                yesterdayMinutes = null,
+                peakHourLabel = null,
+                date = LocalDate.now(),
+                tone = Copy.toneOf(repo.hardTruthMode, repo.quirkyMode),
+            )
+        } else {
+            com.attentionmirror.domain.DynamicMessage(
+                "Test: your daily receipt",
+                "Notifications are working. Your real receipt appears once you've used a tracked app.",
+            )
+        }
 
         postNotification(
             title = message.headline,
@@ -89,7 +97,17 @@ class DailyReceiptWorker(
 
     companion object {
         const val CHANNEL_ID = "daily_receipt"
+        const val KEY_TEST = "test"
         private const val NOTIF_ID = 1001
+
+        /** Fire the receipt notification immediately (used by the test button). */
+        fun runNow(context: Context) {
+            ensureChannel(context)
+            val request = androidx.work.OneTimeWorkRequestBuilder<DailyReceiptWorker>()
+                .setInputData(androidx.work.workDataOf(KEY_TEST to true))
+                .build()
+            androidx.work.WorkManager.getInstance(context).enqueue(request)
+        }
 
         fun ensureChannel(context: Context) {
             val manager = context.getSystemService(NotificationManager::class.java)
