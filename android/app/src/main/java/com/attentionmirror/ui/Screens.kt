@@ -23,6 +23,8 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import com.attentionmirror.data.WeekReport
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Copy
+import com.attentionmirror.domain.Currencies
+import com.attentionmirror.domain.Currency
 import com.attentionmirror.domain.DynamicMessage
 import com.attentionmirror.domain.Formatting
 import com.attentionmirror.domain.Timeline
@@ -99,6 +103,7 @@ fun HomeScreen(
     sessions: List<UsageSession>,
     hourly: List<Long>,
     adDetails: List<com.attentionmirror.domain.AdDetail>,
+    currency: Currency,
     dateLabel: String,
     onShare: () -> Unit,
 ) {
@@ -125,8 +130,8 @@ fun HomeScreen(
         val used = receipt.perPlatform.filter { it.minutes >= 1.0 }
 
         ValueHero(
-            valueRange = Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr),
-            returnedLabel = "₹${receipt.userReceivedInr}",
+            valueRange = Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr, currency),
+            returnedLabel = Formatting.money(receipt.userReceivedInr, currency),
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -160,7 +165,7 @@ fun HomeScreen(
                     title = p.platform,
                     primary = Formatting.minutes(p.minutes),
                     secondary = if (p.estimatedAdsSeen > 0)
-                        "${p.estimatedAdsSeen} ads · ${Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt())}"
+                        "${p.estimatedAdsSeen} ads · ${Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency)}"
                     else "time only · not monetized",
                     fraction = (p.minutes / maxMinutes).toFloat(),
                     accent = Brand.Coral,
@@ -369,6 +374,7 @@ fun ReceiptScreen(
     receipt: AttentionReceipt?,
     dateLabel: String,
     tone: com.attentionmirror.domain.Tone,
+    currency: Currency,
     onShare: () -> Unit,
 ) {
     ScreenColumn {
@@ -416,10 +422,10 @@ fun ReceiptScreen(
             PaperRow("Ads seen", "${receipt.estimatedAdsSeen}")
             PaperRow(
                 "Value created",
-                Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr),
+                Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr, currency),
                 big = true,
             )
-            PaperRow("Returned to you", "₹${receipt.userReceivedInr}", strong = true)
+            PaperRow("Returned to you", Formatting.money(receipt.userReceivedInr, currency), strong = true)
 
             Spacer(Modifier.height(16.dp))
             DashedDivider(PaperRule)
@@ -433,7 +439,7 @@ fun ReceiptScreen(
             PaperCenter("ESTIMATED · NOT A REVENUE CLAIM", size = 9.sp, color = PaperMuted, spacing = 1.5.sp)
         }
 
-        HowCalculated(receipt)
+        HowCalculated(receipt, currency)
 
         Button(onClick = onShare, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.IosShare, contentDescription = null)
@@ -445,7 +451,7 @@ fun ReceiptScreen(
 
 /** Expandable transparency panel: shows the working behind each estimate. */
 @Composable
-private fun HowCalculated(receipt: AttentionReceipt) {
+private fun HowCalculated(receipt: AttentionReceipt, currency: Currency) {
     var expanded by remember { mutableStateOf(false) }
     Section {
         Row(
@@ -478,10 +484,10 @@ private fun HowCalculated(receipt: AttentionReceipt) {
                 )
                 Text(
                     if (config != null && p.estimatedAdsSeen > 0) {
-                        "× ₹${config.lowCpmInr.toInt()}–₹${config.highCpmInr.toInt()} CPM ÷ 1000 = " +
-                            Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt())
+                        "× ${Formatting.valueRange(config.lowCpmInr.toInt(), config.highCpmInr.toInt(), currency)} CPM ÷ 1000 = " +
+                            Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency)
                     } else {
-                        "ad-free / not monetized → ₹0"
+                        "ad-free / not monetized → ${Formatting.money(0, currency)}"
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -552,7 +558,7 @@ private fun ReceiptBarcode() {
 }
 
 @Composable
-fun ReportsScreen(week: WeekReport?) {
+fun ReportsScreen(week: WeekReport?, currency: Currency) {
     ScreenColumn {
         Text("This week", style = MaterialTheme.typography.headlineSmall)
 
@@ -615,7 +621,7 @@ fun ReportsScreen(week: WeekReport?) {
 
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             MetricTile(
-                value = Formatting.valueRange(total.estimatedValueLowInr, total.estimatedValueHighInr),
+                value = Formatting.valueRange(total.estimatedValueLowInr, total.estimatedValueHighInr, currency),
                 label = "value created",
                 accent = Brand.Coral,
                 modifier = Modifier.weight(1f),
@@ -637,7 +643,7 @@ fun ReportsScreen(week: WeekReport?) {
                     packageName = p.packageName,
                     title = p.platform,
                     primary = Formatting.minutes(p.minutes),
-                    secondary = Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt()),
+                    secondary = Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency),
                     fraction = (p.minutes / maxMinutes).toFloat(),
                     accent = Brand.Coral,
                 )
@@ -648,7 +654,7 @@ fun ReportsScreen(week: WeekReport?) {
             val yearLow = total.estimatedValueLowInr * 52
             val yearHigh = total.estimatedValueHighInr * 52
             Text(
-                Formatting.valueRange(yearLow, yearHigh),
+                Formatting.valueRange(yearLow, yearHigh, currency),
                 style = MaterialTheme.typography.displayLarge,
                 color = Brand.Coral,
             )
@@ -666,13 +672,13 @@ fun ReportsScreen(week: WeekReport?) {
 /** Yearly-projection sentence that shifts tone with the size of the number. */
 private fun yearlyLine(yearHigh: Int, yearlyTime: String): String = when {
     yearHigh >= 12000 ->
-        "of monetized attention in a year — about $yearlyTime on the feed, and ₹0 comes back to you."
+        "of monetized attention in a year — about $yearlyTime on the feed, and nothing comes back to you."
     yearHigh >= 5000 ->
-        "of attention value in a year. It adds up far faster than it feels — and ₹0 returns to you."
+        "of attention value in a year. It adds up far faster than it feels — and none returns to you."
     yearHigh >= 1500 ->
         "of monetized attention you may create in a year — none of it returns to you."
     else ->
-        "of attention value over a year. Small moments, but still ₹0 returned to you."
+        "of attention value over a year. Small moments, but still nothing returned to you."
 }
 
 @Composable
@@ -685,6 +691,8 @@ fun SettingsScreen(
     notificationMinute: Int,
     onPickNotificationTime: () -> Unit,
     onSendTestReceipt: () -> Unit,
+    currency: Currency,
+    onSetCurrency: (String?) -> Unit,
     monetizedPlatforms: List<com.attentionmirror.domain.PlatformConfig>,
     adFreePackages: Set<String>,
     onToggleAdFree: (String, Boolean) -> Unit,
@@ -730,6 +738,38 @@ fun SettingsScreen(
                     modifier = Modifier.weight(1f).padding(end = 12.dp),
                 )
                 Button(onClick = onSendTestReceipt) { Text("Test") }
+            }
+        }
+
+        Section(title = "Currency") {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                    Text("Display currency", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Auto-detected from your region. Values are regional estimates.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                var expanded by remember { mutableStateOf(false) }
+                Box {
+                    Button(onClick = { expanded = true }) { Text(currency.code) }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        Currencies.ALL.forEach { c ->
+                            DropdownMenuItem(
+                                text = { Text("${c.code}  ${c.symbol.trim()}") },
+                                onClick = {
+                                    expanded = false
+                                    onSetCurrency(c.code)
+                                },
+                            )
+                        }
+                    }
+                }
             }
         }
 

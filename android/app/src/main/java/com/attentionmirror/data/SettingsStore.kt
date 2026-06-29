@@ -29,6 +29,11 @@ class SettingsStore(context: Context) {
         get() = prefs.getInt(KEY_NOTIF_MINUTE, 30)
         set(value) = prefs.edit().putInt(KEY_NOTIF_MINUTE, value).apply()
 
+    /** Manual currency override (ISO code) or null to auto-detect from locale. */
+    var currencyCode: String?
+        get() = prefs.getString(KEY_CURRENCY, null)
+        set(value) = prefs.edit().putString(KEY_CURRENCY, value).apply()
+
     /**
      * Packages the user has marked ad-free (e.g. YouTube Premium, X Premium).
      * Their time is still tracked, but no ad value is attributed.
@@ -49,6 +54,7 @@ class SettingsStore(context: Context) {
         const val KEY_QUIRKY = "quirky_mode"
         const val KEY_NOTIF_HOUR = "notif_hour"
         const val KEY_NOTIF_MINUTE = "notif_minute"
+        const val KEY_CURRENCY = "currency_code"
         const val KEY_AD_FREE = "ad_free_packages"
     }
 }

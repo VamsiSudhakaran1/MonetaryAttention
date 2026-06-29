@@ -43,6 +43,7 @@ class DailyReceiptWorker(
                 peakHourLabel = null,
                 date = LocalDate.now(),
                 tone = Copy.toneOf(repo.hardTruthMode, repo.quirkyMode),
+                currency = repo.currency(),
             )
         } else {
             com.attentionmirror.domain.DynamicMessage(
@@ -51,19 +52,22 @@ class DailyReceiptWorker(
             )
         }
 
+        val currency = repo.currency()
         postNotification(
             title = message.headline,
             ads = receipt.estimatedAdsSeen,
             value = Formatting.valueRange(
                 receipt.estimatedValueLowInr,
                 receipt.estimatedValueHighInr,
+                currency,
             ),
+            returned = Formatting.money(receipt.userReceivedInr, currency),
             tagline = message.body,
         )
         return Result.success()
     }
 
-    private fun postNotification(title: String, ads: Int, value: String, tagline: String) {
+    private fun postNotification(title: String, ads: Int, value: String, returned: String, tagline: String) {
         ensureChannel(applicationContext)
 
         if (ActivityCompat.checkSelfPermission(
@@ -78,12 +82,12 @@ class DailyReceiptWorker(
         val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_receipt)
             .setContentTitle(title)
-            .setContentText("~$ads ads · created $value · returned to you ₹0")
+            .setContentText("~$ads ads · created $value · returned to you $returned")
             .setStyle(
                 NotificationCompat.BigTextStyle().bigText(
                     "Estimated ads shown: $ads\n" +
                         "Estimated value created: $value\n" +
-                        "Paid back to you: ₹0\n\n" +
+                        "Paid back to you: $returned\n\n" +
                         "$tagline\n" +
                         "Tap to see your Attention Receipt.",
                 ),

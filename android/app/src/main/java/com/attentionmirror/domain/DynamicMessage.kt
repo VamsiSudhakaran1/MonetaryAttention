@@ -24,18 +24,19 @@ object DynamicMessages {
         peakHourLabel: String?,
         date: LocalDate,
         tone: Tone,
+        currency: Currency,
     ): DynamicMessage {
         val minutes = receipt.totalMinutes
         val rng = Random(date.toEpochDay())
 
-        if (minutes < 1.0) return choose(EMPTY, rng, receipt, peakHourLabel, tone)
+        if (minutes < 1.0) return choose(EMPTY, rng, receipt, peakHourLabel, tone, currency)
 
         // Quirky has its own personality pool, regardless of the usage bucket.
         if (tone == Tone.QUIRKY) {
             val q = QUIRKY[rng.nextInt(QUIRKY.size)]
             return DynamicMessage(
-                fill(q.first, receipt, peakHourLabel),
-                fill(q.second, receipt, peakHourLabel),
+                fill(q.first, receipt, peakHourLabel, currency),
+                fill(q.second, receipt, peakHourLabel, currency),
             )
         }
 
@@ -47,7 +48,7 @@ object DynamicMessages {
             date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY -> WEEKEND
             else -> DEFAULT
         }
-        return choose(bucket, rng, receipt, peakHourLabel, tone)
+        return choose(bucket, rng, receipt, peakHourLabel, tone, currency)
     }
 
     private fun choose(
@@ -56,33 +57,35 @@ object DynamicMessages {
         receipt: AttentionReceipt,
         peakHourLabel: String?,
         tone: Tone,
+        currency: Currency,
     ): DynamicMessage {
         val tmpl = bucket[rng.nextInt(bucket.size)]
-        val headline = fill(tmpl.first, receipt, peakHourLabel)
+        val headline = fill(tmpl.first, receipt, peakHourLabel, currency)
         val body = when (tone) {
-            Tone.HARD -> HARD_TRUTH_TAILS[rng.nextInt(HARD_TRUTH_TAILS.size)]
-            Tone.QUIRKY -> QUIRKY_TAILS[rng.nextInt(QUIRKY_TAILS.size)]
-            Tone.GENTLE -> fill(tmpl.second, receipt, peakHourLabel)
+            Tone.HARD -> fill(HARD_TRUTH_TAILS[rng.nextInt(HARD_TRUTH_TAILS.size)], receipt, peakHourLabel, currency)
+            Tone.QUIRKY -> fill(QUIRKY_TAILS[rng.nextInt(QUIRKY_TAILS.size)], receipt, peakHourLabel, currency)
+            Tone.GENTLE -> fill(tmpl.second, receipt, peakHourLabel, currency)
         }
         return DynamicMessage(headline, body)
     }
 
-    private fun fill(s: String, receipt: AttentionReceipt, peakHourLabel: String?): String {
-        val value = Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr)
+    private fun fill(s: String, receipt: AttentionReceipt, peakHourLabel: String?, currency: Currency): String {
+        val value = Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr, currency)
         val top = receipt.perPlatform.firstOrNull()?.platform ?: "apps"
         return s.replace("{value}", value)
             .replace("{time}", Formatting.minutes(receipt.totalMinutes))
             .replace("{ads}", receipt.estimatedAdsSeen.toString())
             .replace("{top}", top)
             .replace("{peak}", peakHourLabel ?: "the evening")
+            .replace("{returned}", Formatting.money(receipt.userReceivedInr, currency))
     }
 
     // Each entry is headline → body. Placeholders: {value} {time} {ads} {top} {peak}.
 
     private val DEFAULT = listOf(
-        "You created {value} of attention today" to "{time} of scrolling. {ads} ads. ₹0 came back to you.",
+        "You created {value} of attention today" to "{time} of scrolling. {ads} ads. {returned} came back to you.",
         "{top} got most of your attention" to "{time} today turned into {value} for advertisers.",
-        "Today's attention bill: {value}" to "Paid by you, in {time} and {ads} ads. Returned: ₹0.",
+        "Today's attention bill: {value}" to "Paid by you, in {time} and {ads} ads. Returned: {returned}.",
         "Your time was worth {value} today" to "You spent {time}. None of that value reached you.",
     )
 
@@ -95,18 +98,18 @@ object DynamicMessages {
     private val DOWN = listOf(
         "Less than yesterday — nice" to "Still {time} today, worth {value} to others.",
         "You scrolled less today" to "{time} this time. Even so, {value} was created from your attention.",
-        "Down from yesterday" to "{time} on monetized apps, {value} of value, ₹0 to you.",
+        "Down from yesterday" to "{time} on monetized apps, {value} of value, {returned} to you.",
     )
 
     private val HEAVY = listOf(
         "A heavy day: {time}" to "That created about {value}. You were paid with distraction.",
-        "{time} is a lot of attention" to "{ads} ads, {value} of value created. Returned to you: ₹0.",
+        "{time} is a lot of attention" to "{ads} ads, {value} of value created. Returned to you: {returned}.",
         "Long day on the feed" to "{top} led {time} of scrolling — {value} earned by others.",
     )
 
     private val LIGHT = listOf(
         "A light day: {time}" to "Even so, it created roughly {value} for advertisers.",
-        "Barely scrolled today" to "{time} only — about {value} of attention value, still ₹0 to you.",
+        "Barely scrolled today" to "{time} only — about {value} of attention value, still {returned} to you.",
         "Quiet day on the apps" to "{time} on {top}. Value created: {value}.",
     )
 
@@ -123,25 +126,25 @@ object DynamicMessages {
 
     private val HARD_TRUTH_TAILS = listOf(
         "You worked for the attention economy today. Unpaid.",
-        "Your scrolling created value. You were paid ₹0.",
+        "Your scrolling created value. You were paid {returned}.",
         "Someone billed for your time today. It wasn't you.",
     )
 
     // Quirky personality (opt-in). Cheeky, never mean.
     private val QUIRKY = listOf(
-        "Congrats — you were the product again 🎉" to "{time} of scrolling = {value} for advertisers. Your cut: ₹0.",
-        "Your eyeballs had a busy day 👀" to "{ads} ads watched you back. {value} created. You? ₹0.",
+        "Congrats — you were the product again 🎉" to "{time} of scrolling = {value} for advertisers. Your cut: {returned}.",
+        "Your eyeballs had a busy day 👀" to "{ads} ads watched you back. {value} created. You? {returned}.",
         "Unpaid internship at {top} 🧑‍💻" to "{time} clocked in today. Salary: {value}… to them.",
         "The algorithm says thank you 🙏" to "{time} became {value}. You were paid in vibes.",
-        "Main character energy 🎬" to "Featured in ~{ads} ads. Box office: {value}. Your royalties: ₹0.",
+        "Main character energy 🎬" to "Featured in ~{ads} ads. Box office: {value}. Your royalties: {returned}.",
         "Doomscroll speedrun complete 🏃" to "{time} logged. {value} generated for the house.",
-        "Your attention went shopping 🛍️" to "Spent {time}, made {value} for others, came back with ₹0.",
+        "Your attention went shopping 🛍️" to "Spent {time}, made {value} for others, came back with {returned}.",
         "Free labour, premium vibes ✨" to "{ads} ads, {value} of value, all paid in dopamine.",
     )
 
     private val QUIRKY_TAILS = listOf(
         "You did unpaid overtime for the algorithm. 💸",
-        "Tip jar for your attention: still ₹0. 🫥",
+        "Tip jar for your attention: still {returned}. 🫥",
         "The feed thanks you for your service. 🫡",
     )
 }

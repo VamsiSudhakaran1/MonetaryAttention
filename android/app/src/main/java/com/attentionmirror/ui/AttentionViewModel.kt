@@ -7,6 +7,8 @@ import com.attentionmirror.data.AttentionRepository
 import com.attentionmirror.data.WeekReport
 import com.attentionmirror.domain.AdDetail
 import com.attentionmirror.domain.AttentionReceipt
+import com.attentionmirror.domain.Currencies
+import com.attentionmirror.domain.Currency
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.DynamicMessage
 import com.attentionmirror.domain.PlatformConfig
@@ -31,6 +33,7 @@ data class UiState(
     val week: WeekReport? = null,
     val monetizedPlatforms: List<PlatformConfig> = emptyList(),
     val adFreePackages: Set<String> = emptySet(),
+    val currency: Currency = Currencies.INR,
 )
 
 class AttentionViewModel(app: Application) : AndroidViewModel(app) {
@@ -64,8 +67,14 @@ class AttentionViewModel(app: Application) : AndroidViewModel(app) {
                 week = repo.weekReport(),
                 monetizedPlatforms = DefaultPlatforms.ALL.filter { it.monetized },
                 adFreePackages = repo.adFreePackages(),
+                currency = repo.currency(),
             )
         }
+    }
+
+    fun setCurrency(code: String?) {
+        repo.setCurrency(code)
+        refresh()
     }
 
     fun setHardTruthMode(enabled: Boolean) {

@@ -26,7 +26,7 @@ object Copy {
 
     /** Short line for the daily notification body / share card. */
     fun tagline(tone: Tone): String = when (tone) {
-        Tone.HARD -> "Your scrolling created value. You were paid ₹0."
+        Tone.HARD -> "Your scrolling created value. You were paid nothing."
         Tone.QUIRKY -> "You did unpaid overtime for the algorithm. 💸"
         Tone.GENTLE -> "Your attention had value. Today it was monetized by others."
     }

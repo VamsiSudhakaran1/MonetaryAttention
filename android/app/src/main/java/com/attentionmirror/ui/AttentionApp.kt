@@ -47,6 +47,7 @@ fun AttentionApp(
     onPickNotificationTime: () -> Unit,
     onSendTestReceipt: () -> Unit,
     onToggleAdFree: (String, Boolean) -> Unit,
+    onSetCurrency: (String?) -> Unit,
     onMarkAd: (String) -> Unit,
     onAddAdTile: () -> Unit,
     onOpenAdScanner: () -> Unit,
@@ -106,14 +107,16 @@ fun AttentionApp(
                     sessions = state.sessions,
                     hourly = state.hourly,
                     adDetails = state.adDetails,
+                    currency = state.currency,
                     dateLabel = dateLabel,
                     onShare = onShareReceipt,
                 )
-                Tab.Reports -> ReportsScreen(week = state.week)
+                Tab.Reports -> ReportsScreen(week = state.week, currency = state.currency)
                 Tab.Receipt -> ReceiptScreen(
                     receipt = state.today,
                     dateLabel = dateLabel,
                     tone = com.attentionmirror.domain.Copy.toneOf(state.hardTruthMode, state.quirkyMode),
+                    currency = state.currency,
                     onShare = onShareReceipt,
                 )
                 Tab.Settings -> SettingsScreen(
@@ -125,6 +128,8 @@ fun AttentionApp(
                     notificationMinute = state.notificationMinute,
                     onPickNotificationTime = onPickNotificationTime,
                     onSendTestReceipt = onSendTestReceipt,
+                    currency = state.currency,
+                    onSetCurrency = onSetCurrency,
                     monetizedPlatforms = state.monetizedPlatforms,
                     adFreePackages = state.adFreePackages,
                     onToggleAdFree = onToggleAdFree,

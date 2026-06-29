@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
                         val tone = Copy.toneOf(state.hardTruthMode, state.quirkyMode)
                         ReceiptSharer.share(
                             this,
-                            ShareCardText.fromReceipt(receipt, dateLabel, tone),
+                            ShareCardText.fromReceipt(receipt, dateLabel, tone, state.currency),
                         )
                     },
                     onToggleHardTruth = { viewModel.setHardTruthMode(it) },
@@ -79,6 +79,7 @@ class MainActivity : ComponentActivity() {
                         ).show()
                     },
                     onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },
+                    onSetCurrency = { code -> viewModel.setCurrency(code) },
                     onMarkAd = { pkg -> viewModel.markAd(pkg) },
                     onAddAdTile = { requestAddAdTile() },
                     onOpenAdScanner = {

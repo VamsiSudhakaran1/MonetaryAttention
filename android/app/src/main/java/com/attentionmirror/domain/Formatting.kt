@@ -25,9 +25,16 @@ object Formatting {
         return if (minutes < 1.0) "<1m" else minutes(minutes)
     }
 
-    /** A value range, e.g. "₹18–₹42". Collapses to a single value if equal. */
-    fun valueRange(low: Int, high: Int): String =
-        if (low == high) "₹$low" else "₹$low–₹$high"
+    /** A single money amount (INR base) shown in [currency], e.g. "$3". */
+    fun money(amountInr: Int, currency: Currency): String =
+        "${currency.symbol}${(amountInr * currency.factor).roundToInt()}"
+
+    /** A value range in [currency], e.g. "₹18–₹42" / "$1–$3". */
+    fun valueRange(lowInr: Int, highInr: Int, currency: Currency): String {
+        val low = money(lowInr, currency)
+        val high = money(highInr, currency)
+        return if (low == high) low else "$low–$high"
+    }
 
     /** A wall-clock time, e.g. (21, 30) -> "9:30 PM". */
     fun timeOfDay(hour: Int, minute: Int): String =
