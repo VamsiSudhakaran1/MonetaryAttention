@@ -69,11 +69,13 @@ class MainActivity : ComponentActivity() {
                     },
                     onSendTestReceipt = {
                         requestNotificationPermissionIfNeeded()
-                        DailyReceiptWorker.runNow(this)
+                        // Post directly — bypass WorkManager/Doze to isolate the
+                        // notification pipeline from scheduling.
+                        com.attentionmirror.notification.ReceiptNotifier.showTest(this)
                         android.widget.Toast.makeText(
                             this,
-                            "Test receipt sent — check your notifications.",
-                            android.widget.Toast.LENGTH_SHORT,
+                            "Test sent. If nothing appears, check Notification health below.",
+                            android.widget.Toast.LENGTH_LONG,
                         ).show()
                     },
                     onToggleAdFree = { pkg, adFree -> viewModel.setAdFree(pkg, adFree) },

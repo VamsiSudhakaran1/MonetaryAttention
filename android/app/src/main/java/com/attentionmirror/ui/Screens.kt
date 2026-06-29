@@ -16,11 +16,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -692,6 +695,8 @@ fun SettingsScreen(
     ScreenColumn {
         Text("Settings", style = MaterialTheme.typography.headlineSmall)
 
+        NotificationHealth(onSendTestReceipt)
+
         Section(title = "Daily receipt") {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -873,6 +878,70 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+/** Shows whether every notification precondition is met, with one-tap fixes. */
+@Composable
+private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
+    val context = LocalContext.current
+    val notifier = com.attentionmirror.notification.ReceiptNotifier
+    val allowed = notifier.notificationsAllowed(context)
+    val channelOn = notifier.channelEnabled(context)
+    val batteryOk = run {
+        val pm = context.getSystemService(android.os.PowerManager::class.java)
+        pm?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+    }
+
+    Section(title = "Notification health") {
+        StatusRow("Notifications allowed", allowed)
+        HairlineDivider()
+        StatusRow("Receipt channel on", channelOn)
+        HairlineDivider()
+        StatusRow("Battery unrestricted", batteryOk)
+        Spacer(Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(onClick = onSendTestReceipt) { Text("Send test") }
+            OutlinedButton(onClick = {
+                context.startActivity(
+                    android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
+                )
+            }) { Text("Notif settings") }
+        }
+        if (!batteryOk) {
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = {
+                context.startActivity(
+                    android.content.Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                        .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
+                )
+            }) { Text("Allow background activity") }
+        }
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "If \"Send test\" shows nothing, fix the red items. Some phones " +
+                "(Xiaomi, Realme, Oppo, Vivo) also require enabling Autostart for the app.",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun StatusRow(label: String, ok: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(label, style = MaterialTheme.typography.titleMedium)
+        Icon(
+            if (ok) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
+            contentDescription = if (ok) "OK" else "Problem",
+            tint = if (ok) Brand.Mint else Brand.Coral,
         )
     }
 }
