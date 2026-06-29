@@ -20,19 +20,19 @@ on the `full` build, the opt-in scanner refine `ads/min` per user).
 
 | Platform | Ads/min | Low CPM (₹) | High CPM (₹) | Confidence | Reasoning |
 |---|---|---|---|---|---|
-| YouTube | 0.20 | 250 | 800 | Medium | Pre/mid-roll on longer sessions; Premium users should mark ad-free. |
-| Facebook | 0.35 | 200 | 600 | Medium | Dense in-feed ads; high-value ad market. |
-| Instagram | 0.45 | 220 | 650 | Low–Med | Reels ad load is high and bursty; calibration helps a lot. |
-| X | 0.30 | 150 | 450 | Low | Promoted posts vary widely by account. |
-| Reddit | 0.25 | 120 | 400 | Low | Promoted posts; lower CPM. |
-| Snapchat | 0.30 | 150 | 450 | Low | Stories/Discover ads. |
-| ShareChat | 0.40 | 80 | 300 | Low | Regional CPMs lower than global. |
-| Moj | 0.50 | 80 | 300 | Low | Short-video, high ad frequency, low CPM. |
-| Josh | 0.50 | 80 | 300 | Low | Short-video, high ad frequency, low CPM. |
-| Chrome | 0.10 | 100 | 350 | Low | Web browsing is mixed; conservative. |
+| YouTube | 0.20 | 310 | 980 | Medium | Pre/mid-roll on longer sessions; Premium users should mark ad-free. |
+| Facebook | 0.35 | 250 | 730 | Medium | Dense in-feed ads; high-value ad market. |
+| Instagram | 0.45 | 270 | 800 | Low–Med | Reels ad load is high and bursty; calibration helps a lot. |
+| X | 0.30 | 185 | 550 | Low | Promoted posts vary widely by account. |
+| Reddit | 0.25 | 150 | 490 | Low | Promoted posts; lower CPM. |
+| Snapchat | 0.30 | 185 | 550 | Low | Stories/Discover ads. |
+| ShareChat | 0.40 | 100 | 370 | Low | Regional CPMs lower than global. |
+| Moj | 0.50 | 100 | 370 | Low | Short-video, high ad frequency, low CPM. |
+| Josh | 0.50 | 100 | 370 | Low | Short-video, high ad frequency, low CPM. |
+| Chrome | 0.10 | 125 | 430 | Low | Web browsing is mixed; conservative. |
 | WhatsApp | — | — | — | — | **Not monetized** — time tracked, value always ₹0. |
 
-_Last reviewed: 2026-06._
+_Last reviewed: 2026-06 (CPMs raised ~22% to better reflect current ad rates)._
 
 ## Why ranges, and why conservative
 

@@ -53,8 +53,8 @@ class EstimateEngineTest {
         )
         val receipt = EstimateEngine.buildReceipt(DefaultPlatforms.BY_PACKAGE, usage)
         assertEquals(46, receipt.estimatedAdsSeen)
-        assertEquals(10, receipt.estimatedValueLowInr)
-        assertEquals(31, receipt.estimatedValueHighInr)
+        assertEquals(13, receipt.estimatedValueLowInr)
+        assertEquals(38, receipt.estimatedValueHighInr)
         assertEquals(0, receipt.userReceivedInr)
         assertEquals(
             listOf("YouTube", "Facebook", "Instagram"),

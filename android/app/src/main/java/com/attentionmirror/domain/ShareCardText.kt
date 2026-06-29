@@ -17,6 +17,7 @@ data class ShareCardText(
             receipt: AttentionReceipt,
             dateLabel: String,
             tone: Tone,
+            currency: Currency,
         ): ShareCardText = ShareCardText(
             title = "My Unpaid Attention",
             dateLabel = dateLabel,
@@ -26,8 +27,9 @@ data class ShareCardText(
                 Formatting.valueRange(
                     receipt.estimatedValueLowInr,
                     receipt.estimatedValueHighInr,
+                    currency,
                 ) to "value created",
-                "₹${receipt.userReceivedInr}" to "returned to me",
+                Formatting.money(receipt.userReceivedInr, currency) to "returned to me",
             ),
             conclusion = Copy.tagline(tone),
             footer = "Attention Mirror · estimated",

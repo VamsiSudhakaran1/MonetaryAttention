@@ -70,6 +70,24 @@ class AttentionRepository(
     val notificationHour: Int get() = settings.notificationHour
     val notificationMinute: Int get() = settings.notificationMinute
 
+    /** Display currency: manual override, else SIM/locale country (no permission). */
+    fun currency(): com.attentionmirror.domain.Currency {
+        settings.currencyCode?.let { com.attentionmirror.domain.Currencies.BY_CODE[it]?.let { c -> return c } }
+        return com.attentionmirror.domain.Currencies.forCountry(detectCountry())
+    }
+
+    fun setCurrency(code: String?) {
+        settings.currencyCode = code
+    }
+
+    private fun detectCountry(): String? {
+        val tm = context.getSystemService(android.telephony.TelephonyManager::class.java)
+        val sim = tm?.simCountryIso?.takeIf { it.isNotBlank() }
+        val network = tm?.networkCountryIso?.takeIf { it.isNotBlank() }
+        val locale = context.resources.configuration.locales.get(0)?.country?.takeIf { it.isNotBlank() }
+        return sim ?: network ?: locale
+    }
+
     /** Persist a new daily notification time and re-arm the scheduled work. */
     fun setNotificationTime(hour: Int, minute: Int) {
         settings.notificationHour = hour
@@ -129,6 +147,7 @@ class AttentionRepository(
             peakHourLabel = peakLabel,
             date = day,
             tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
+            currency = currency(),
         )
         return DayInsights(receipt, sessions, hourly.toList(), message)
     }

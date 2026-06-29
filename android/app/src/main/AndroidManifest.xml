@@ -28,9 +28,9 @@
     <application
         android:name=".AttentionMirrorApp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AttentionMirror">
 
@@ -51,6 +51,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!-- Daily receipt alarm: fires the worker at the user's chosen time. -->
+        <receiver
+            android:name=".notification.ReceiptAlarmReceiver"
+            android:exported="false" />
 
         <!-- Quick Settings tile: "I saw an ad" for user-assisted calibration. -->
         <service

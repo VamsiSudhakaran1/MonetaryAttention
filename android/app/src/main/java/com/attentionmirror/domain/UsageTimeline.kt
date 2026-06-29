@@ -54,6 +54,25 @@ object Timeline {
     fun peakHour(hourly: LongArray): Int =
         hourly.indices.maxByOrNull { hourly[it] } ?: 0
 
+    /** Foreground seconds per package during a single hour of the day. */
+    fun appsInHour(
+        sessions: List<UsageSession>,
+        dayStartMillis: Long,
+        hour: Int,
+    ): Map<String, Long> {
+        val hourStart = dayStartMillis + hour * HOUR_MS
+        val hourEnd = hourStart + HOUR_MS
+        val out = HashMap<String, Long>()
+        for (s in sessions) {
+            val start = maxOf(s.startMillis, hourStart)
+            val end = minOf(s.endMillis, hourEnd)
+            if (end > start) {
+                out[s.packageName] = (out[s.packageName] ?: 0L) + (end - start) / 1000L
+            }
+        }
+        return out
+    }
+
     /** Group sessions into per-app rollups, busiest first. */
     fun perApp(
         sessions: List<UsageSession>,

@@ -22,16 +22,16 @@ data class PlatformConfig(
  */
 object DefaultPlatforms {
     val ALL: List<PlatformConfig> = listOf(
-        PlatformConfig("YouTube", "com.google.android.youtube", 0.20, 250.0, 800.0),
-        PlatformConfig("Facebook", "com.facebook.katana", 0.35, 200.0, 600.0),
-        PlatformConfig("Instagram", "com.instagram.android", 0.45, 220.0, 650.0),
-        PlatformConfig("X", "com.twitter.android", 0.30, 150.0, 450.0),
-        PlatformConfig("Reddit", "com.reddit.frontpage", 0.25, 120.0, 400.0),
-        PlatformConfig("Snapchat", "com.snapchat.android", 0.30, 150.0, 450.0),
-        PlatformConfig("ShareChat", "in.mohalla.sharechat", 0.40, 80.0, 300.0),
-        PlatformConfig("Moj", "in.mohalla.video", 0.50, 80.0, 300.0),
-        PlatformConfig("Josh", "com.eterno.shortvideos", 0.50, 80.0, 300.0),
-        PlatformConfig("Chrome", "com.android.chrome", 0.10, 100.0, 350.0),
+        PlatformConfig("YouTube", "com.google.android.youtube", 0.20, 310.0, 980.0),
+        PlatformConfig("Facebook", "com.facebook.katana", 0.35, 250.0, 730.0),
+        PlatformConfig("Instagram", "com.instagram.android", 0.45, 270.0, 800.0),
+        PlatformConfig("X", "com.twitter.android", 0.30, 185.0, 550.0),
+        PlatformConfig("Reddit", "com.reddit.frontpage", 0.25, 150.0, 490.0),
+        PlatformConfig("Snapchat", "com.snapchat.android", 0.30, 185.0, 550.0),
+        PlatformConfig("ShareChat", "in.mohalla.sharechat", 0.40, 100.0, 370.0),
+        PlatformConfig("Moj", "in.mohalla.video", 0.50, 100.0, 370.0),
+        PlatformConfig("Josh", "com.eterno.shortvideos", 0.50, 100.0, 370.0),
+        PlatformConfig("Chrome", "com.android.chrome", 0.10, 125.0, 430.0),
         // Tracked for time only; never monetized.
         PlatformConfig("WhatsApp", "com.whatsapp", 0.0, 0.0, 0.0, monetized = false),
     )

@@ -1,6 +1,7 @@
 package com.attentionmirror.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,11 +16,22 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+
+private const val GAP_RATIO = 0.45f
+
+/** Map a tap x-position (px) to a bar index using the chart's layout math. */
+private fun barIndexAt(x: Float, widthPx: Float, n: Int): Int {
+    val barW = widthPx / (n + GAP_RATIO * (n + 1))
+    val gap = barW * GAP_RATIO
+    return ((x - gap) / (barW + gap)).toInt().coerceIn(0, n - 1)
+}
 
 /**
  * A lightweight rounded bar chart drawn with Canvas — no chart dependency, so it
- * stays fast and on-brand. [highlightIndex] is drawn in the accent colour.
+ * stays fast and on-brand. [highlightIndex] is drawn in the accent colour;
+ * [onBarTap] (when set) reports the tapped bar index.
  */
 @Composable
 fun BarChart(
@@ -28,18 +40,24 @@ fun BarChart(
     highlightIndex: Int = -1,
     barColor: Color = MaterialTheme.colorScheme.primary,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    onBarTap: ((Int) -> Unit)? = null,
 ) {
     val max = (values.maxOrNull() ?: 0f).coerceAtLeast(1f)
-    Canvas(modifier) {
-        val n = values.size
+    val n = values.size
+    val tap = if (onBarTap != null && n > 0) {
+        Modifier.pointerInput(n) {
+            detectTapGestures { offset -> onBarTap(barIndexAt(offset.x, size.width.toFloat(), n)) }
+        }
+    } else {
+        Modifier
+    }
+    Canvas(modifier.then(tap)) {
         if (n == 0) return@Canvas
-        val gapRatio = 0.45f
-        val barW = size.width / (n + gapRatio * (n + 1))
-        val gap = barW * gapRatio
+        val barW = size.width / (n + GAP_RATIO * (n + 1))
+        val gap = barW * GAP_RATIO
         val radius = CornerRadius(barW / 2f, barW / 2f)
         values.forEachIndexed { i, v ->
             val x = gap + i * (barW + gap)
-            // Track (full height, faint) gives the bars structure even when empty.
             drawRoundRect(
                 color = trackColor,
                 topLeft = Offset(x, 0f),
@@ -67,11 +85,13 @@ fun LabeledBarChart(
     modifier: Modifier = Modifier,
     highlightIndex: Int = -1,
     height: Int = 120,
+    onBarTap: ((Int) -> Unit)? = null,
 ) {
     Column(modifier) {
         BarChart(
             values = values,
             highlightIndex = highlightIndex,
+            onBarTap = onBarTap,
             modifier = Modifier.fillMaxWidth().height(height.dp),
         )
         Row(
