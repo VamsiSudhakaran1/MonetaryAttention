@@ -8,9 +8,9 @@ import com.attentionmirror.domain.Calibration
 import com.attentionmirror.domain.Copy
 import com.attentionmirror.domain.DefaultPlatforms
 import com.attentionmirror.domain.DynamicMessage
-import com.attentionmirror.domain.DynamicMessages
 import com.attentionmirror.domain.EstimateEngine
 import com.attentionmirror.domain.Formatting
+import com.attentionmirror.domain.MessageEngine
 import com.attentionmirror.domain.Timeline
 import com.attentionmirror.domain.UsageSession
 import com.attentionmirror.notification.DailyReceiptScheduler
@@ -138,19 +138,32 @@ class AttentionRepository(
         val sessions = collector.collectSessionsForDay(day, zone)
         val dayStart = day.atStartOfDay(zone).toInstant().toEpochMilli()
         val hourly = Timeline.hourlySeconds(sessions, dayStart)
-        val yesterdayMinutes = dao.secondsForDay(day.minusDays(1).format(isoDate))
-            .sumOf { it.totalSeconds } / 60.0
-        val peakLabel = if (hourly.sum() > 0) Formatting.hourLabel(Timeline.peakHour(hourly)) else null
-        val message = DynamicMessages.forDay(
-            receipt = receipt,
-            yesterdayMinutes = yesterdayMinutes.takeIf { it > 0 },
-            peakHourLabel = peakLabel,
-            date = day,
-            tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
-            currency = currency(),
-        )
+        val message = buildMessage(receipt, day, LocalTime.now())
         return DayInsights(receipt, sessions, hourly.toList(), message)
     }
+
+    /**
+     * A fresh, context-aware quirky message for [day]: reacts to time of day,
+     * weekend, how heavy the day was, and the category of the top app, and
+     * rotates on every call so the user rarely sees the same line twice.
+     */
+    fun buildMessage(
+        receipt: AttentionReceipt,
+        day: LocalDate = LocalDate.now(),
+        time: LocalTime = LocalTime.now(),
+    ): DynamicMessage = MessageEngine.generate(
+        receipt = receipt,
+        date = day,
+        time = time,
+        category = MessageEngine.categoryFor(receipt.perPlatform.firstOrNull()?.packageName ?: ""),
+        tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
+        currency = currency(),
+        lang = detectLanguage(),
+        nonce = settings.nextMessageSeed(),
+    )
+
+    private fun detectLanguage(): String =
+        context.resources.configuration.locales.get(0)?.language ?: "en"
 
     /**
      * Per-app ad reporting from the opt-in scanner (count, on-screen time,

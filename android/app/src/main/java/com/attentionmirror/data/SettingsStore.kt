@@ -49,6 +49,16 @@ class SettingsStore(context: Context) {
         adFreePackages = updated
     }
 
+    /**
+     * A monotonically increasing seed so the home message rotates every time the
+     * app is opened (a fresh, different quirky line each visit).
+     */
+    fun nextMessageSeed(): Long {
+        val next = prefs.getLong(KEY_MSG_SEED, 0L) + 1L
+        prefs.edit().putLong(KEY_MSG_SEED, next).apply()
+        return next
+    }
+
     private companion object {
         const val KEY_HARD_TRUTH = "hard_truth_mode"
         const val KEY_QUIRKY = "quirky_mode"
@@ -56,5 +66,6 @@ class SettingsStore(context: Context) {
         const val KEY_NOTIF_MINUTE = "notif_minute"
         const val KEY_CURRENCY = "currency_code"
         const val KEY_AD_FREE = "ad_free_packages"
+        const val KEY_MSG_SEED = "message_seed"
     }
 }

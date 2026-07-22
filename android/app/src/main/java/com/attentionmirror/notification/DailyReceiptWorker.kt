@@ -12,10 +12,7 @@ import androidx.work.WorkerParameters
 import com.attentionmirror.MainActivity
 import com.attentionmirror.R
 import com.attentionmirror.data.AttentionRepository
-import com.attentionmirror.domain.Copy
-import com.attentionmirror.domain.DynamicMessages
 import com.attentionmirror.domain.Formatting
-import java.time.LocalDate
 
 /**
  * Runs once a day (see [DailyReceiptScheduler]). Refreshes today's usage and
@@ -36,15 +33,8 @@ class DailyReceiptWorker(
         if (receipt.totalMinutes <= 0 && !isTest) return Result.success()
 
         val message = if (receipt.totalMinutes > 0) {
-            // A fresh, day-specific message so the notification never repeats.
-            DynamicMessages.forDay(
-                receipt = receipt,
-                yesterdayMinutes = null,
-                peakHourLabel = null,
-                date = LocalDate.now(),
-                tone = Copy.toneOf(repo.hardTruthMode, repo.quirkyMode),
-                currency = repo.currency(),
-            )
+            // A fresh, context-aware message so the notification never repeats.
+            repo.buildMessage(receipt)
         } else {
             com.attentionmirror.domain.DynamicMessage(
                 "Test: your daily receipt",
