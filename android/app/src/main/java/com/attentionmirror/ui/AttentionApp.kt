@@ -26,14 +26,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.attentionmirror.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private enum class Tab(val label: String, val icon: ImageVector) {
-    Home("Home", Icons.Filled.Home),
-    Reports("Reports", Icons.Filled.BarChart),
-    Receipt("Receipt", Icons.Filled.ReceiptLong),
-    Settings("Settings", Icons.Filled.Settings),
+private enum class Tab(val labelRes: Int, val icon: ImageVector) {
+    Home(R.string.tab_home, Icons.Filled.Home),
+    Reports(R.string.tab_reports, Icons.Filled.BarChart),
+    Receipt(R.string.tab_receipt, Icons.Filled.ReceiptLong),
+    Settings(R.string.tab_settings, Icons.Filled.Settings),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +53,8 @@ fun AttentionApp(
     onMarkAd: (String) -> Unit,
     onAddAdTile: () -> Unit,
     onOpenAdScanner: () -> Unit,
+    onSetLanguage: (String) -> Unit,
+    currentLanguageTag: String,
 ) {
     if (state.loading) {
         Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
@@ -74,12 +78,12 @@ fun AttentionApp(
             CenterAlignedTopAppBar(
                 title = {
                     val current = Tab.entries[tab]
-                    Text(if (current == Tab.Home) "Attention Mirror" else current.label)
+                    Text(if (current == Tab.Home) stringResource(R.string.app_name) else stringResource(current.labelRes))
                 },
                 actions = {
                     if (Tab.entries[tab] == Tab.Home && state.today != null) {
                         IconButton(onClick = onShareReceipt) {
-                            Icon(Icons.Filled.IosShare, contentDescription = "Share")
+                            Icon(Icons.Filled.IosShare, contentDescription = stringResource(R.string.tab_receipt))
                         }
                     }
                 },
@@ -92,8 +96,8 @@ fun AttentionApp(
                     NavigationBarItem(
                         selected = tab == index,
                         onClick = { tab = index },
-                        icon = { Icon(t.icon, contentDescription = t.label) },
-                        label = { Text(t.label) },
+                        icon = { Icon(t.icon, contentDescription = stringResource(t.labelRes)) },
+                        label = { Text(stringResource(t.labelRes)) },
                     )
                 }
             }
@@ -136,6 +140,8 @@ fun AttentionApp(
                     onMarkAd = onMarkAd,
                     onAddAdTile = onAddAdTile,
                     onOpenAdScanner = onOpenAdScanner,
+                    onSetLanguage = onSetLanguage,
+                    currentLanguageTag = currentLanguageTag,
                 )
             }
         }

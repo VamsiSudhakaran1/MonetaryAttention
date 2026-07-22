@@ -8,11 +8,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import com.attentionmirror.notification.DailyReceiptWorker
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +29,7 @@ import com.attentionmirror.tracking.UsageStatsCollector
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val viewModel: AttentionViewModel by viewModels()
 
@@ -88,6 +90,14 @@ class MainActivity : ComponentActivity() {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                         )
                     },
+                    onSetLanguage = { tag ->
+                        val locales = if (tag.isEmpty()) LocaleListCompat.getEmptyLocaleList()
+                        else LocaleListCompat.forLanguageTags(tag)
+                        // Applies immediately and recreates the activity in the new
+                        // locale; AppCompat persists the choice across restarts.
+                        AppCompatDelegate.setApplicationLocales(locales)
+                    },
+                    currentLanguageTag = AppCompatDelegate.getApplicationLocales().toLanguageTags(),
                 )
             }
         }

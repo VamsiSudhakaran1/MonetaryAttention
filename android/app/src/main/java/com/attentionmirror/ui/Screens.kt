@@ -45,10 +45,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.attentionmirror.R
 import com.attentionmirror.data.WeekReport
 import com.attentionmirror.domain.AttentionReceipt
 import com.attentionmirror.domain.Copy
@@ -81,18 +83,17 @@ fun PermissionGate(onGrant: () -> Unit) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            "See who profited from your scrolling.",
+            stringResource(R.string.gate_title),
             style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(Modifier.height(14.dp))
         Text(
-            "Attention Mirror reads only your aggregate app usage time — never " +
-                "your screen, messages, or content. Grant Usage Access to begin.",
+            stringResource(R.string.gate_body),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(Modifier.height(24.dp))
-        Button(onClick = onGrant) { Text("Grant Usage Access") }
+        Button(onClick = onGrant) { Text(stringResource(R.string.gate_button)) }
     }
 }
 
@@ -699,13 +700,15 @@ fun SettingsScreen(
     onMarkAd: (String) -> Unit,
     onAddAdTile: () -> Unit,
     onOpenAdScanner: () -> Unit,
+    onSetLanguage: (String) -> Unit,
+    currentLanguageTag: String,
 ) {
     ScreenColumn {
-        Text("Settings", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
 
         NotificationHealth(onSendTestReceipt)
 
-        Section(title = "Daily receipt") {
+        Section(title = stringResource(R.string.section_daily_receipt)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -741,7 +744,7 @@ fun SettingsScreen(
             }
         }
 
-        Section(title = "Currency") {
+        Section(title = stringResource(R.string.section_currency)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -773,7 +776,49 @@ fun SettingsScreen(
             }
         }
 
-        Section(title = "Tone") {
+        Section(title = stringResource(R.string.section_language)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                    Text(stringResource(R.string.language_label), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.language_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                val languages = listOf(
+                    "" to stringResource(R.string.lang_system),
+                    "en" to "English",
+                    "hi" to "हिन्दी",
+                    "ta" to "தமிழ்",
+                    "te" to "తెలుగు",
+                )
+                val currentName = languages.firstOrNull { it.first == currentLanguageTag }?.second
+                    ?: languages.firstOrNull { it.first.isNotEmpty() && currentLanguageTag.startsWith(it.first) }?.second
+                    ?: languages.first().second
+                var langExpanded by remember { mutableStateOf(false) }
+                Box {
+                    Button(onClick = { langExpanded = true }) { Text(currentName) }
+                    DropdownMenu(expanded = langExpanded, onDismissRequest = { langExpanded = false }) {
+                        languages.forEach { (tag, name) ->
+                            DropdownMenuItem(
+                                text = { Text(name) },
+                                onClick = {
+                                    langExpanded = false
+                                    onSetLanguage(tag)
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        Section(title = stringResource(R.string.section_tone)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -807,7 +852,7 @@ fun SettingsScreen(
             }
         }
 
-        Section(title = "Ad-free accounts") {
+        Section(title = stringResource(R.string.section_adfree)) {
             Text(
                 "Pay for Premium (YouTube, X, …)? Mark it ad-free. We keep showing " +
                     "your time but stop estimating ad value for it.",
@@ -836,7 +881,7 @@ fun SettingsScreen(
         }
 
         if (com.attentionmirror.BuildConfig.HAS_AD_SCANNER) {
-            Section(title = "Automatic ad detection") {
+            Section(title = stringResource(R.string.section_auto_ad)) {
                 Text(
                     "Opt-in. Counts real “Sponsored” labels on-device in supported " +
                         "apps so your estimates become actual ad counts — great for " +
@@ -852,7 +897,7 @@ fun SettingsScreen(
             }
         }
 
-        Section(title = "Calibrate ad counting") {
+        Section(title = stringResource(R.string.section_calibrate)) {
             val context = LocalContext.current
             Text(
                 "Saw an ad? Tap the app below. After ~15 minutes on a platform your " +
@@ -902,7 +947,7 @@ fun SettingsScreen(
             Button(onClick = onAddAdTile) { Text("Add Quick Settings tile") }
         }
 
-        Section(title = "How we estimate") {
+        Section(title = stringResource(R.string.section_how_estimate)) {
             Text(
                 "We read only aggregate app usage time — never screen content, " +
                     "messages, or ads themselves. Value is a transparent estimate from " +
@@ -913,7 +958,7 @@ fun SettingsScreen(
         }
 
         Text(
-            "Attention Mirror · v0.1.0",
+            "Attention Mirror · v0.1.1",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -934,7 +979,7 @@ private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
         pm?.isIgnoringBatteryOptimizations(context.packageName) ?: true
     }
 
-    Section(title = "Notification health") {
+    Section(title = stringResource(R.string.section_notif_health)) {
         StatusRow("Notifications allowed", allowed)
         HairlineDivider()
         StatusRow("Receipt channel on", channelOn)
@@ -989,10 +1034,10 @@ private fun StatusRow(label: String, ok: Boolean) {
 @Composable
 private fun EmptyState() {
     Section {
-        Text("No tracked usage yet", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.empty_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(6.dp))
         Text(
-            "Spend some time on a monetized app, then return here. Your receipt builds automatically.",
+            stringResource(R.string.empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

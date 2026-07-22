@@ -1,4 +1,9 @@
 <resources>
-    <!-- Base theme; Compose drives the real colors via AttentionMirrorTheme. -->
-    <style name="Theme.AttentionMirror" parent="android:Theme.Material.NoActionBar" />
+    <!-- AppCompat DayNight base so AppCompatActivity + per-app language switching
+         work on all API levels (not just 33+). Compose drives the real colors via
+         AttentionMirrorTheme; the dark window background just avoids a light flash
+         on launch since the app renders a dark UI. -->
+    <style name="Theme.AttentionMirror" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">#0B0E14</item>
+    </style>
 </resources>

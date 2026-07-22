@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Attention Mirror</string>
+    <string name="tagline">உங்கள் ஸ்க்ரோலிங்கால் யார் லாபம் அடைந்தார்கள் என்று பாருங்கள்.</string>
+    <string name="tile_label">நான் ஒரு விளம்பரத்தைப் பார்த்தேன்</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_home">முகப்பு</string>
+    <string name="tab_reports">அறிக்கைகள்</string>
+    <string name="tab_receipt">ரசீது</string>
+    <string name="tab_settings">அமைப்புகள்</string>
+
+    <!-- Permission gate -->
+    <string name="gate_title">உங்கள் ஸ்க்ரோலிங்கால் யார் லாபம் அடைந்தார்கள் என்று பாருங்கள்.</string>
+    <string name="gate_body">Attention Mirror உங்கள் ஆப் பயன்பாட்டு மொத்த நேரத்தை மட்டுமே படிக்கிறது — உங்கள் திரை, செய்திகள் அல்லது உள்ளடக்கத்தை ஒருபோதும் இல்லை. தொடங்க Usage Access வழங்கவும்.</string>
+    <string name="gate_button">Usage Access வழங்கு</string>
+
+    <!-- Empty state -->
+    <string name="empty_title">இதுவரை பயன்பாடு பதிவாகவில்லை</string>
+    <string name="empty_body">பணமாக்கப்பட்ட ஆப்பில் சிறிது நேரம் செலவிடுங்கள், பிறகு இங்கே திரும்பி வாருங்கள். உங்கள் ரசீது தானாக உருவாகும்.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">அமைப்புகள்</string>
+    <string name="section_daily_receipt">தினசரி ரசீது</string>
+    <string name="section_currency">நாணயம்</string>
+    <string name="section_tone">தொனி</string>
+    <string name="section_language">மொழி</string>
+    <string name="section_adfree">விளம்பரமில்லா கணக்குகள்</string>
+    <string name="section_auto_ad">தானியங்கி விளம்பரக் கண்டறிதல்</string>
+    <string name="section_calibrate">விளம்பர எண்ணிக்கையைச் சரிசெய்</string>
+    <string name="section_how_estimate">நாங்கள் எப்படி மதிப்பிடுகிறோம்</string>
+    <string name="section_notif_health">அறிவிப்பு நிலை</string>
+
+    <!-- Language picker -->
+    <string name="language_label">ஆப் மொழி</string>
+    <string name="language_desc">ஆப்பிற்கான மொழியைத் தேர்ந்தெடுக்கவும்.</string>
+    <string name="lang_system">சிஸ்டம் இயல்புநிலை</string>
+</resources>

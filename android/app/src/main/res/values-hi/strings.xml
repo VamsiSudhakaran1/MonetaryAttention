@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Attention Mirror</string>
+    <string name="tagline">देखिए आपकी स्क्रॉलिंग से किसने कमाया।</string>
+    <string name="tile_label">मैंने एक विज्ञापन देखा</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_home">होम</string>
+    <string name="tab_reports">रिपोर्ट</string>
+    <string name="tab_receipt">रसीद</string>
+    <string name="tab_settings">सेटिंग्स</string>
+
+    <!-- Permission gate -->
+    <string name="gate_title">देखिए आपकी स्क्रॉलिंग से किसने कमाया।</string>
+    <string name="gate_body">Attention Mirror केवल आपके ऐप उपयोग का कुल समय पढ़ता है — कभी आपकी स्क्रीन, संदेश या सामग्री नहीं। शुरू करने के लिए Usage Access दें।</string>
+    <string name="gate_button">Usage Access दें</string>
+
+    <!-- Empty state -->
+    <string name="empty_title">अभी तक कोई उपयोग दर्ज नहीं</string>
+    <string name="empty_body">किसी मॉनिटाइज़्ड ऐप पर कुछ समय बिताएँ, फिर यहाँ लौटें। आपकी रसीद अपने आप बनती है।</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="section_daily_receipt">दैनिक रसीद</string>
+    <string name="section_currency">मुद्रा</string>
+    <string name="section_tone">लहजा</string>
+    <string name="section_language">भाषा</string>
+    <string name="section_adfree">विज्ञापन-मुक्त खाते</string>
+    <string name="section_auto_ad">स्वचालित विज्ञापन पहचान</string>
+    <string name="section_calibrate">विज्ञापन गणना कैलिब्रेट करें</string>
+    <string name="section_how_estimate">हम कैसे अनुमान लगाते हैं</string>
+    <string name="section_notif_health">नोटिफिकेशन स्थिति</string>
+
+    <!-- Language picker -->
+    <string name="language_label">ऐप की भाषा</string>
+    <string name="language_desc">ऐप के लिए भाषा चुनें।</string>
+    <string name="lang_system">सिस्टम डिफ़ॉल्ट</string>
+</resources>

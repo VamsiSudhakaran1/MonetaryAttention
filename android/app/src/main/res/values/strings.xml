@@ -2,4 +2,36 @@
     <string name="app_name">Attention Mirror</string>
     <string name="tagline">See who profited from your scrolling.</string>
     <string name="tile_label">I saw an ad</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_home">Home</string>
+    <string name="tab_reports">Reports</string>
+    <string name="tab_receipt">Receipt</string>
+    <string name="tab_settings">Settings</string>
+
+    <!-- Permission gate -->
+    <string name="gate_title">See who profited from your scrolling.</string>
+    <string name="gate_body">Attention Mirror reads only your aggregate app usage time — never your screen, messages, or content. Grant Usage Access to begin.</string>
+    <string name="gate_button">Grant Usage Access</string>
+
+    <!-- Empty state -->
+    <string name="empty_title">No tracked usage yet</string>
+    <string name="empty_body">Spend some time on a monetized app, then return here. Your receipt builds automatically.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="section_daily_receipt">Daily receipt</string>
+    <string name="section_currency">Currency</string>
+    <string name="section_tone">Tone</string>
+    <string name="section_language">Language</string>
+    <string name="section_adfree">Ad-free accounts</string>
+    <string name="section_auto_ad">Automatic ad detection</string>
+    <string name="section_calibrate">Calibrate ad counting</string>
+    <string name="section_how_estimate">How we estimate</string>
+    <string name="section_notif_health">Notification health</string>
+
+    <!-- Language picker -->
+    <string name="language_label">App language</string>
+    <string name="language_desc">Choose the language for the app.</string>
+    <string name="lang_system">System default</string>
 </resources>

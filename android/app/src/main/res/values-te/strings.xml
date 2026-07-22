@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Attention Mirror</string>
+    <string name="tagline">మీ స్క్రోలింగ్‌తో ఎవరు లాభపడ్డారో చూడండి.</string>
+    <string name="tile_label">నేను ఒక ప్రకటనను చూశాను</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_home">హోమ్</string>
+    <string name="tab_reports">నివేదికలు</string>
+    <string name="tab_receipt">రసీదు</string>
+    <string name="tab_settings">సెట్టింగ్‌లు</string>
+
+    <!-- Permission gate -->
+    <string name="gate_title">మీ స్క్రోలింగ్‌తో ఎవరు లాభపడ్డారో చూడండి.</string>
+    <string name="gate_body">Attention Mirror మీ యాప్ వినియోగ మొత్తం సమయాన్ని మాత్రమే చదువుతుంది — మీ స్క్రీన్, సందేశాలు లేదా కంటెంట్‌ను ఎప్పటికీ కాదు. ప్రారంభించడానికి Usage Access ఇవ్వండి.</string>
+    <string name="gate_button">Usage Access ఇవ్వండి</string>
+
+    <!-- Empty state -->
+    <string name="empty_title">ఇంకా వినియోగం నమోదు కాలేదు</string>
+    <string name="empty_body">మానిటైజ్ చేయబడిన యాప్‌లో కొంత సమయం గడపండి, ఆపై ఇక్కడకు తిరిగి రండి. మీ రసీదు దానంతటదే తయారవుతుంది.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">సెట్టింగ్‌లు</string>
+    <string name="section_daily_receipt">రోజువారీ రసీదు</string>
+    <string name="section_currency">కరెన్సీ</string>
+    <string name="section_tone">శైలి</string>
+    <string name="section_language">భాష</string>
+    <string name="section_adfree">ప్రకటన-రహిత ఖాతాలు</string>
+    <string name="section_auto_ad">స్వయంచాలక ప్రకటన గుర్తింపు</string>
+    <string name="section_calibrate">ప్రకటన లెక్కింపును సరిచేయండి</string>
+    <string name="section_how_estimate">మేము ఎలా అంచనా వేస్తాము</string>
+    <string name="section_notif_health">నోటిఫికేషన్ స్థితి</string>
+
+    <!-- Language picker -->
+    <string name="language_label">యాప్ భాష</string>
+    <string name="language_desc">యాప్ కోసం భాషను ఎంచుకోండి.</string>
+    <string name="lang_system">సిస్టమ్ డిఫాల్ట్</string>
+</resources>

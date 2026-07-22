@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.DeviceFontFamilyName
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
@@ -50,11 +51,15 @@ private fun manrope(weight: FontWeight) = Font(
     variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
 )
 
+// Manrope covers Latin only. Appending the platform sans-serif gives a fallback
+// typeface so Devanagari/Tamil/Telugu (and any other non-Latin script) render
+// real glyphs instead of empty boxes when the app is used in those languages.
 private val Manrope = FontFamily(
     manrope(FontWeight.Normal),
     manrope(FontWeight.Medium),
     manrope(FontWeight.SemiBold),
     manrope(FontWeight.Bold),
+    Font(DeviceFontFamilyName("sans-serif")),
 )
 
 private val DarkColors = darkColorScheme(
