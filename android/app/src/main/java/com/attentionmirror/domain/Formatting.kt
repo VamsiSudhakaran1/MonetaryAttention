@@ -25,9 +25,17 @@ object Formatting {
         return if (minutes < 1.0) "<1m" else minutes(minutes)
     }
 
-    /** A single money amount (INR base) shown in [currency], e.g. "$3". */
-    fun money(amountInr: Int, currency: Currency): String =
-        "${currency.symbol}${(amountInr * currency.factor).roundToInt()}"
+    /**
+     * A single money amount (INR base) shown in [currency], e.g. "$3".
+     * Large amounts are digit-grouped in the right style: Indian (₹1,00,000)
+     * for INR, Western (100,000) otherwise.
+     */
+    fun money(amountInr: Int, currency: Currency): String {
+        val amount = (amountInr * currency.factor).roundToInt()
+        val locale = if (currency.code == "INR") java.util.Locale("en", "IN") else java.util.Locale.US
+        val grouped = java.text.NumberFormat.getIntegerInstance(locale).format(amount.toLong())
+        return "${currency.symbol}$grouped"
+    }
 
     /** A value range in [currency], e.g. "₹18–₹42" / "$1–$3". */
     fun valueRange(lowInr: Int, highInr: Int, currency: Currency): String {

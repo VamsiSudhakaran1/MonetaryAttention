@@ -56,6 +56,22 @@ class UsageStatsCollector(private val context: Context) {
     }
 
     /**
+     * The single most-used app package for [day] across *all* apps (not just the
+     * ones we monetize) — used only to flavour the daily message (e.g. detect a
+     * gaming or shopping day). Reads aggregate time only, never content.
+     */
+    fun topAppForDay(day: LocalDate, zone: ZoneId = ZoneId.systemDefault()): String? {
+        if (!hasUsageAccess()) return null
+        val manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        val start = day.atStartOfDay(zone).toInstant().toEpochMilli()
+        val end = day.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+        return manager.queryAndAggregateUsageStats(start, end).values
+            .filter { it.totalTimeInForeground > 0 && it.packageName != context.packageName }
+            .maxByOrNull { it.totalTimeInForeground }
+            ?.packageName
+    }
+
+    /**
      * Reconstructs per-app foreground [UsageSession]s for [day] from the system
      * event stream — this is what powers the hour-by-hour and minute-precise
      * timeline. We only read foreground/background *transitions* (timestamps),

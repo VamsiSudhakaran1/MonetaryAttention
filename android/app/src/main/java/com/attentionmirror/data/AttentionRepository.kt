@@ -155,7 +155,7 @@ class AttentionRepository(
         receipt = receipt,
         date = day,
         time = time,
-        category = MessageEngine.categoryFor(receipt.perPlatform.firstOrNull()?.packageName ?: ""),
+        category = detectCategory(day, receipt),
         tone = Copy.toneOf(settings.hardTruthMode, settings.quirkyMode),
         currency = currency(),
         lang = detectLanguage(),
@@ -164,6 +164,37 @@ class AttentionRepository(
 
     private fun detectLanguage(): String =
         context.resources.configuration.locales.get(0)?.language ?: "en"
+
+    /**
+     * Pick the message category from the day's dominant app: if the top overall
+     * app is a known platform, use its category; if it's something else (e.g. a
+     * game), ask the system for its category; else fall back to the top
+     * monetized platform.
+     */
+    private fun detectCategory(day: LocalDate, receipt: AttentionReceipt): MessageEngine.AppCategory {
+        collector.topAppForDay(day)?.let { top ->
+            val tracked = MessageEngine.categoryFor(top)
+            if (tracked != MessageEngine.AppCategory.GENERAL) return tracked
+            systemCategory(top)?.let { return it }
+        }
+        return MessageEngine.categoryFor(receipt.perPlatform.firstOrNull()?.packageName ?: "")
+    }
+
+    /** The installed app's declared category (API 26+), mapped to our buckets. */
+    private fun systemCategory(pkg: String): MessageEngine.AppCategory? {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) return null
+        return try {
+            when (context.packageManager.getApplicationInfo(pkg, 0).category) {
+                android.content.pm.ApplicationInfo.CATEGORY_GAME -> MessageEngine.AppCategory.GAMING
+                android.content.pm.ApplicationInfo.CATEGORY_VIDEO -> MessageEngine.AppCategory.VIDEO
+                android.content.pm.ApplicationInfo.CATEGORY_SOCIAL -> MessageEngine.AppCategory.SOCIAL
+                android.content.pm.ApplicationInfo.CATEGORY_MAPS -> MessageEngine.AppCategory.BROWSING
+                else -> null
+            }
+        } catch (_: android.content.pm.PackageManager.NameNotFoundException) {
+            null
+        }
+    }
 
     /**
      * Per-app ad reporting from the opt-in scanner (count, on-screen time,
