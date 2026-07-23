@@ -34,4 +34,51 @@
     <string name="language_label">ஆப் மொழி</string>
     <string name="language_desc">ஆப்பிற்கான மொழியைத் தேர்ந்தெடுக்கவும்.</string>
     <string name="lang_system">சிஸ்டம் இயல்புநிலை</string>
+
+    <!-- Home -->
+    <string name="lbl_on_monetized">பணமாக்கப்பட்ட ஆப்களில்</string>
+    <string name="lbl_ads_seen">மதிப்பிடப்பட்ட விளம்பரங்கள்</string>
+    <string name="sec_where_time">உங்கள் நேரம் எங்கு போனது</string>
+    <string name="lbl_not_monetized">நேரம் மட்டும் · பணமாக்கப்படவில்லை</string>
+    <string name="btn_share_home">என் கவன ரசீதை பகிர்</string>
+    <string name="sec_hour">உங்கள் நாள், மணிநேரம் வாரியாக</string>
+    <string name="msg_no_apps_hour">இந்த மணிநேரத்தில் கண்காணிக்கப்பட்ட ஆப் இல்லை.</string>
+    <string name="sec_ads_detected">விளம்பரங்கள் கண்டறியப்பட்டன</string>
+    <string name="note_ads_measured">ஆப்ட்-இன் விளம்பர ஸ்கேனரால் சாதனத்தில் அளக்கப்பட்டது.</string>
+    <string name="sec_sessions">இன்றைய அமர்வுகள்</string>
+
+    <!-- Reports -->
+    <string name="sec_this_week">இந்த வாரம்</string>
+    <string name="lbl_spent_week">இந்த வாரம் ஸ்க்ரோலில் செலவழித்தது</string>
+    <string name="msg_no_apps_day">அந்த நாளில் கண்காணிக்கப்பட்ட ஆப் இல்லை.</string>
+    <string name="sec_who_attention">உங்கள் கவனத்தை யார் பெற்றார்கள்?</string>
+    <string name="sec_if_keeps">இப்படியே தொடர்ந்தால்</string>
+    <string name="note_projection">இந்த வாரத்தின் மதிப்பீடு. கணிப்பு அல்ல.</string>
+    <string name="lbl_value_created">உருவான மதிப்பு</string>
+    <string name="lbl_ads_seen_short">விளம்பரங்கள்</string>
+    <string name="note_tap_day">ஒரு நாளை தட்டி எந்த ஆப்களை பயன்படுத்தினீர்கள் எனப் பாருங்கள்.</string>
+
+    <!-- Receipt -->
+    <string name="receipt_title">கவன ரசீது</string>
+    <string name="receipt_unpaid">ஊதியமில்லா கவன ரசீது</string>
+    <string name="receipt_ads_seen">விளம்பரங்கள்</string>
+    <string name="receipt_value_created">உருவான மதிப்பு</string>
+    <string name="receipt_returned">உங்களுக்கு திரும்பியது</string>
+    <string name="receipt_estimated">மதிப்பீடு · வருவாய் உரிமைகோரல் அல்ல</string>
+    <string name="btn_share_receipt">ரசீதை பகிர்</string>
+    <string name="q_how_calculated">இது எப்படி கணக்கிடப்பட்டது?</string>
+
+    <!-- Settings labels -->
+    <string name="lbl_notif_time">அறிவிப்பு நேரம்</string>
+    <string name="desc_notif_time">உங்கள் நாள் இறுதி ரசீது எப்போது வரும்.</string>
+    <string name="btn_test">டெஸ்ட்</string>
+    <string name="btn_send_test">டெஸ்ட் அனுப்பு</string>
+    <string name="lbl_display_currency">காட்டப்படும் நாணயம்</string>
+    <string name="lbl_hard_truth">ஹார்ட் ட்ரூத் மோட்</string>
+    <string name="lbl_quirky">க்விர்க்கி மோட்</string>
+
+    <plurals name="sessions_count">
+        <item quantity="one">%d அமர்வு</item>
+        <item quantity="other">%d அமர்வுகள்</item>
+    </plurals>
 </resources>

@@ -34,4 +34,51 @@
     <string name="language_label">ऐप की भाषा</string>
     <string name="language_desc">ऐप के लिए भाषा चुनें।</string>
     <string name="lang_system">सिस्टम डिफ़ॉल्ट</string>
+
+    <!-- Home -->
+    <string name="lbl_on_monetized">मॉनिटाइज़्ड ऐप्स पर</string>
+    <string name="lbl_ads_seen">अनुमानित विज्ञापन देखे</string>
+    <string name="sec_where_time">आपका समय कहाँ गया</string>
+    <string name="lbl_not_monetized">सिर्फ़ समय · मॉनिटाइज़्ड नहीं</string>
+    <string name="btn_share_home">मेरी अटेंशन रसीद शेयर करें</string>
+    <string name="sec_hour">आपका दिन, घंटे-दर-घंटे</string>
+    <string name="msg_no_apps_hour">इस घंटे कोई ट्रैक किया ऐप नहीं।</string>
+    <string name="sec_ads_detected">विज्ञापन पहचाने गए</string>
+    <string name="note_ads_measured">ऑप्ट-इन ऐड स्कैनर द्वारा डिवाइस पर मापा गया।</string>
+    <string name="sec_sessions">आज के सेशन</string>
+
+    <!-- Reports -->
+    <string name="sec_this_week">इस हफ़्ते</string>
+    <string name="lbl_spent_week">इस हफ़्ते स्क्रॉल में बिताया</string>
+    <string name="msg_no_apps_day">उस दिन कोई ट्रैक किया ऐप नहीं।</string>
+    <string name="sec_who_attention">आपका ध्यान किसने लिया?</string>
+    <string name="sec_if_keeps">अगर ऐसा ही चलता रहा</string>
+    <string name="note_projection">इस हफ़्ते का अनुमान। आकलन, पूर्वानुमान नहीं।</string>
+    <string name="lbl_value_created">बनी वैल्यू</string>
+    <string name="lbl_ads_seen_short">विज्ञापन देखे</string>
+    <string name="note_tap_day">किसी दिन को टैप करें और देखें कौन-से ऐप इस्तेमाल किए।</string>
+
+    <!-- Receipt -->
+    <string name="receipt_title">अटेंशन रसीद</string>
+    <string name="receipt_unpaid">बिना भुगतान अटेंशन रसीद</string>
+    <string name="receipt_ads_seen">विज्ञापन देखे</string>
+    <string name="receipt_value_created">बनी वैल्यू</string>
+    <string name="receipt_returned">आपको लौटाया</string>
+    <string name="receipt_estimated">अनुमानित · कमाई का दावा नहीं</string>
+    <string name="btn_share_receipt">रसीद शेयर करें</string>
+    <string name="q_how_calculated">यह कैसे कैलकुलेट हुआ?</string>
+
+    <!-- Settings labels -->
+    <string name="lbl_notif_time">नोटिफिकेशन समय</string>
+    <string name="desc_notif_time">आपकी दिन के अंत की रसीद कब आती है।</string>
+    <string name="btn_test">टेस्ट</string>
+    <string name="btn_send_test">टेस्ट भेजें</string>
+    <string name="lbl_display_currency">प्रदर्शित मुद्रा</string>
+    <string name="lbl_hard_truth">हार्ड ट्रुथ मोड</string>
+    <string name="lbl_quirky">क्विर्की मोड</string>
+
+    <plurals name="sessions_count">
+        <item quantity="one">%d सेशन</item>
+        <item quantity="other">%d सेशन</item>
+    </plurals>
 </resources>

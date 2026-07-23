@@ -34,4 +34,51 @@
     <string name="language_label">యాప్ భాష</string>
     <string name="language_desc">యాప్ కోసం భాషను ఎంచుకోండి.</string>
     <string name="lang_system">సిస్టమ్ డిఫాల్ట్</string>
+
+    <!-- Home -->
+    <string name="lbl_on_monetized">మానిటైజ్ చేసిన యాప్‌లలో</string>
+    <string name="lbl_ads_seen">అంచనా వేసిన ప్రకటనలు</string>
+    <string name="sec_where_time">మీ సమయం ఎక్కడికి పోయింది</string>
+    <string name="lbl_not_monetized">సమయం మాత్రమే · మానిటైజ్ కాలేదు</string>
+    <string name="btn_share_home">నా అటెన్షన్ రసీదును షేర్ చేయండి</string>
+    <string name="sec_hour">మీ రోజు, గంటవారీగా</string>
+    <string name="msg_no_apps_hour">ఈ గంటలో ట్రాక్ చేసిన యాప్ లేదు.</string>
+    <string name="sec_ads_detected">ప్రకటనలు గుర్తించబడ్డాయి</string>
+    <string name="note_ads_measured">ఆప్ట్-ఇన్ యాడ్ స్కానర్ ద్వారా పరికరంలో కొలవబడింది.</string>
+    <string name="sec_sessions">నేటి సెషన్‌లు</string>
+
+    <!-- Reports -->
+    <string name="sec_this_week">ఈ వారం</string>
+    <string name="lbl_spent_week">ఈ వారం స్క్రోల్‌లో గడిపింది</string>
+    <string name="msg_no_apps_day">ఆ రోజు ట్రాక్ చేసిన యాప్ లేదు.</string>
+    <string name="sec_who_attention">మీ దృష్టిని ఎవరు పొందారు?</string>
+    <string name="sec_if_keeps">ఇలాగే కొనసాగితే</string>
+    <string name="note_projection">ఈ వారం అంచనా. అంచనా మాత్రమే, ఫోర్‌కాస్ట్ కాదు.</string>
+    <string name="lbl_value_created">తయారైన విలువ</string>
+    <string name="lbl_ads_seen_short">ప్రకటనలు</string>
+    <string name="note_tap_day">ఒక రోజును ట్యాప్ చేసి ఏ యాప్‌లు వాడారో చూడండి.</string>
+
+    <!-- Receipt -->
+    <string name="receipt_title">అటెన్షన్ రసీదు</string>
+    <string name="receipt_unpaid">చెల్లించని అటెన్షన్ రసీదు</string>
+    <string name="receipt_ads_seen">ప్రకటనలు</string>
+    <string name="receipt_value_created">తయారైన విలువ</string>
+    <string name="receipt_returned">మీకు తిరిగి ఇచ్చింది</string>
+    <string name="receipt_estimated">అంచనా · ఆదాయ దావా కాదు</string>
+    <string name="btn_share_receipt">రసీదును షేర్ చేయండి</string>
+    <string name="q_how_calculated">ఇది ఎలా లెక్కించబడింది?</string>
+
+    <!-- Settings labels -->
+    <string name="lbl_notif_time">నోటిఫికేషన్ సమయం</string>
+    <string name="desc_notif_time">మీ రోజు చివరి రసీదు ఎప్పుడు వస్తుంది.</string>
+    <string name="btn_test">టెస్ట్</string>
+    <string name="btn_send_test">టెస్ట్ పంపండి</string>
+    <string name="lbl_display_currency">ప్రదర్శించే కరెన్సీ</string>
+    <string name="lbl_hard_truth">హార్డ్ ట్రూత్ మోడ్</string>
+    <string name="lbl_quirky">క్విర్కీ మోడ్</string>
+
+    <plurals name="sessions_count">
+        <item quantity="one">%d సెషన్</item>
+        <item quantity="other">%d సెషన్‌లు</item>
+    </plurals>
 </resources>

@@ -34,4 +34,51 @@
     <string name="language_label">App language</string>
     <string name="language_desc">Choose the language for the app.</string>
     <string name="lang_system">System default</string>
+
+    <!-- Home -->
+    <string name="lbl_on_monetized">on monetized apps</string>
+    <string name="lbl_ads_seen">estimated ads seen</string>
+    <string name="sec_where_time">Where your time went</string>
+    <string name="lbl_not_monetized">time only · not monetized</string>
+    <string name="btn_share_home">Share my attention receipt</string>
+    <string name="sec_hour">Your day, hour by hour</string>
+    <string name="msg_no_apps_hour">No tracked apps this hour.</string>
+    <string name="sec_ads_detected">Ads detected</string>
+    <string name="note_ads_measured">Measured on-device by the opt-in ad scanner.</string>
+    <string name="sec_sessions">Sessions today</string>
+
+    <!-- Reports -->
+    <string name="sec_this_week">This week</string>
+    <string name="lbl_spent_week">spent scrolling this week</string>
+    <string name="msg_no_apps_day">No tracked apps that day.</string>
+    <string name="sec_who_attention">Who got your attention?</string>
+    <string name="sec_if_keeps">If this keeps up</string>
+    <string name="note_projection">Projection from this week. Estimated, not a forecast.</string>
+    <string name="lbl_value_created">value created</string>
+    <string name="lbl_ads_seen_short">ads seen</string>
+    <string name="note_tap_day">Tap a day to see which apps you used.</string>
+
+    <!-- Receipt -->
+    <string name="receipt_title">Attention Receipt</string>
+    <string name="receipt_unpaid">UNPAID ATTENTION RECEIPT</string>
+    <string name="receipt_ads_seen">Ads seen</string>
+    <string name="receipt_value_created">Value created</string>
+    <string name="receipt_returned">Returned to you</string>
+    <string name="receipt_estimated">ESTIMATED · NOT A REVENUE CLAIM</string>
+    <string name="btn_share_receipt">Share receipt</string>
+    <string name="q_how_calculated">How was this calculated?</string>
+
+    <!-- Settings labels -->
+    <string name="lbl_notif_time">Notification time</string>
+    <string name="desc_notif_time">When your end-of-day receipt arrives.</string>
+    <string name="btn_test">Test</string>
+    <string name="btn_send_test">Send test</string>
+    <string name="lbl_display_currency">Display currency</string>
+    <string name="lbl_hard_truth">Hard truth mode</string>
+    <string name="lbl_quirky">Quirky mode</string>
+
+    <plurals name="sessions_count">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
 </resources>

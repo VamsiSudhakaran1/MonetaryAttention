@@ -45,6 +45,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -138,13 +139,13 @@ fun HomeScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             MetricTile(
                 value = Formatting.minutes(receipt.totalMinutes),
-                label = "on monetized apps",
+                label = stringResource(R.string.lbl_on_monetized),
                 accent = Brand.Sky,
                 modifier = Modifier.weight(1f),
             )
             MetricTile(
                 value = "${receipt.estimatedAdsSeen}",
-                label = "estimated ads seen",
+                label = stringResource(R.string.lbl_ads_seen),
                 accent = Brand.Amber,
                 modifier = Modifier.weight(1f),
             )
@@ -157,7 +158,7 @@ fun HomeScreen(
         var selectedHour by remember { mutableStateOf(-1) }
         var expandedApp by remember { mutableStateOf<String?>(null) }
 
-        Section(title = "Where your time went") {
+        Section(title = stringResource(R.string.sec_where_time)) {
             val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
             used.forEachIndexed { i, p ->
                 if (i > 0) HairlineDivider()
@@ -167,7 +168,7 @@ fun HomeScreen(
                     primary = Formatting.minutes(p.minutes),
                     secondary = if (p.estimatedAdsSeen > 0)
                         "${p.estimatedAdsSeen} ads · ${Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency)}"
-                    else "time only · not monetized",
+                    else stringResource(R.string.lbl_not_monetized),
                     fraction = (p.minutes / maxMinutes).toFloat(),
                     accent = Brand.Coral,
                 )
@@ -177,11 +178,11 @@ fun HomeScreen(
         Button(onClick = onShare, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.IosShare, contentDescription = null)
             Spacer(Modifier.width(8.dp))
-            Text("Share my attention receipt")
+            Text(stringResource(R.string.btn_share_home))
         }
 
         if (hourly.any { it > 0 }) {
-            Section(title = "Your day, hour by hour") {
+            Section(title = stringResource(R.string.sec_hour)) {
                 val peak = Timeline.peakHour(hourly.toLongArray())
                 BarChart(
                     values = hourly.map { it.toFloat() },
@@ -212,7 +213,7 @@ fun HomeScreen(
                     Spacer(Modifier.height(8.dp))
                     if (apps.isEmpty()) {
                         Text(
-                            "No tracked apps this hour.",
+                            stringResource(R.string.msg_no_apps_hour),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -226,18 +227,18 @@ fun HomeScreen(
         }
 
         if (adDetails.isNotEmpty()) {
-            Section(title = "Ads detected") {
+            Section(title = stringResource(R.string.sec_ads_detected)) {
                 adDetails.forEachIndexed { i, ad ->
                     if (i > 0) HairlineDivider()
                     AdDetailRow(ad)
                 }
                 Spacer(Modifier.height(8.dp))
-                EstimateNote("Measured on-device by the opt-in ad scanner.")
+                EstimateNote(stringResource(R.string.note_ads_measured))
             }
         }
 
         if (sessions.isNotEmpty()) {
-            Section(title = "Sessions today") {
+            Section(title = stringResource(R.string.sec_sessions)) {
                 val grouped = sessions.groupBy { it.packageName }
                     .map { (pkg, list) -> Triple(pkg, list.sumOf { it.durationSeconds }, list) }
                     .sortedByDescending { it.second }
@@ -300,7 +301,7 @@ private fun SessionGroupRow(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                "$count session${if (count == 1) "" else "s"}",
+                pluralStringResource(R.plurals.sessions_count, count, count),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -380,7 +381,7 @@ fun ReceiptScreen(
 ) {
     ScreenColumn {
         if (receipt == null || receipt.totalMinutes <= 0) {
-            Text("Attention Receipt", style = MaterialTheme.typography.headlineSmall)
+            Text(stringResource(R.string.receipt_title), style = MaterialTheme.typography.headlineSmall)
             EmptyState()
             return@ScreenColumn
         }
@@ -404,7 +405,7 @@ fun ReceiptScreen(
             Spacer(Modifier.height(12.dp))
             PaperCenter("ATTENTION MIRROR", size = 19.sp, color = PaperInk, bold = true, spacing = 3.sp)
             Spacer(Modifier.height(3.dp))
-            PaperCenter("UNPAID ATTENTION RECEIPT", size = 10.sp, color = PaperMuted, spacing = 2.sp)
+            PaperCenter(stringResource(R.string.receipt_unpaid), size = 10.sp, color = PaperMuted, spacing = 2.sp)
             Spacer(Modifier.height(2.dp))
             PaperCenter(dateLabel, size = 12.sp, color = PaperMuted)
 
@@ -420,13 +421,13 @@ fun ReceiptScreen(
             DashedDivider(PaperRule)
             Spacer(Modifier.height(14.dp))
 
-            PaperRow("Ads seen", "${receipt.estimatedAdsSeen}")
+            PaperRow(stringResource(R.string.receipt_ads_seen), "${receipt.estimatedAdsSeen}")
             PaperRow(
-                "Value created",
+                stringResource(R.string.receipt_value_created),
                 Formatting.valueRange(receipt.estimatedValueLowInr, receipt.estimatedValueHighInr, currency),
                 big = true,
             )
-            PaperRow("Returned to you", Formatting.money(receipt.userReceivedInr, currency), strong = true)
+            PaperRow(stringResource(R.string.receipt_returned), Formatting.money(receipt.userReceivedInr, currency), strong = true)
 
             Spacer(Modifier.height(16.dp))
             DashedDivider(PaperRule)
@@ -437,7 +438,7 @@ fun ReceiptScreen(
             Spacer(Modifier.height(20.dp))
             ReceiptBarcode()
             Spacer(Modifier.height(8.dp))
-            PaperCenter("ESTIMATED · NOT A REVENUE CLAIM", size = 9.sp, color = PaperMuted, spacing = 1.5.sp)
+            PaperCenter(stringResource(R.string.receipt_estimated), size = 9.sp, color = PaperMuted, spacing = 1.5.sp)
         }
 
         HowCalculated(receipt, currency)
@@ -445,7 +446,7 @@ fun ReceiptScreen(
         Button(onClick = onShare, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.IosShare, contentDescription = null)
             Spacer(Modifier.width(8.dp))
-            Text("Share receipt")
+            Text(stringResource(R.string.btn_share_receipt))
         }
     }
 }
@@ -460,7 +461,7 @@ private fun HowCalculated(receipt: AttentionReceipt, currency: Currency) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("How was this calculated?", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.q_how_calculated), style = MaterialTheme.typography.titleMedium)
             Icon(
                 if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                 contentDescription = null,
@@ -561,7 +562,7 @@ private fun ReceiptBarcode() {
 @Composable
 fun ReportsScreen(week: WeekReport?, currency: Currency) {
     ScreenColumn {
-        Text("This week", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.sec_this_week), style = MaterialTheme.typography.headlineSmall)
 
         if (week == null || week.total.totalMinutes <= 0) {
             EmptyState()
@@ -583,7 +584,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
                 if (trend != "—") Pill("$trend vs last week", trendColor)
             }
             Text(
-                "spent scrolling this week",
+                stringResource(R.string.lbl_spent_week),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -608,7 +609,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
                 Spacer(Modifier.height(6.dp))
                 if (dayApps.isEmpty()) {
                     Text(
-                        "No tracked apps that day.",
+                        stringResource(R.string.msg_no_apps_day),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -616,26 +617,26 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
                     dayApps.forEach { p -> MiniAppRow(p.packageName, Formatting.minutes(p.minutes)) }
                 }
             } else {
-                EstimateNote("Tap a day to see which apps you used.")
+                EstimateNote(stringResource(R.string.note_tap_day))
             }
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             MetricTile(
                 value = Formatting.valueRange(total.estimatedValueLowInr, total.estimatedValueHighInr, currency),
-                label = "value created",
+                label = stringResource(R.string.lbl_value_created),
                 accent = Brand.Coral,
                 modifier = Modifier.weight(1f),
             )
             MetricTile(
                 value = "${total.estimatedAdsSeen}",
-                label = "ads seen",
+                label = stringResource(R.string.lbl_ads_seen_short),
                 accent = Brand.Amber,
                 modifier = Modifier.weight(1f),
             )
         }
 
-        Section(title = "Who got your attention?") {
+        Section(title = stringResource(R.string.sec_who_attention)) {
             val used = total.perPlatform.filter { it.minutes >= 1.0 }
             val maxMinutes = used.maxOfOrNull { it.minutes } ?: 1.0
             used.forEachIndexed { i, p ->
@@ -651,7 +652,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
             }
         }
 
-        Section(title = "If this keeps up") {
+        Section(title = stringResource(R.string.sec_if_keeps)) {
             val yearLow = total.estimatedValueLowInr * 52
             val yearHigh = total.estimatedValueHighInr * 52
             Text(
@@ -665,7 +666,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            EstimateNote("Projection from this week. Estimated, not a forecast.")
+            EstimateNote(stringResource(R.string.note_projection))
         }
     }
 }
@@ -715,9 +716,9 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                    Text("Notification time", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.lbl_notif_time), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "When your end-of-day receipt arrives.",
+                        stringResource(R.string.desc_notif_time),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -740,7 +741,7 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f).padding(end = 12.dp),
                 )
-                Button(onClick = onSendTestReceipt) { Text("Test") }
+                Button(onClick = onSendTestReceipt) { Text(stringResource(R.string.btn_test)) }
             }
         }
 
@@ -751,7 +752,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                    Text("Display currency", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.lbl_display_currency), style = MaterialTheme.typography.titleMedium)
                     Text(
                         "Auto-detected from your region. Values are regional estimates.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -825,7 +826,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                    Text("Hard truth mode", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.lbl_hard_truth), style = MaterialTheme.typography.titleMedium)
                     Text(
                         "Stronger wording on your receipt and notification. The numbers never change.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -841,7 +842,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                    Text("Quirky mode", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.lbl_quirky), style = MaterialTheme.typography.titleMedium)
                     Text(
                         "Cheeky, funnier wording. Overrides hard truth.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -987,7 +988,7 @@ private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
         StatusRow("Battery unrestricted", batteryOk)
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Button(onClick = onSendTestReceipt) { Text("Send test") }
+            Button(onClick = onSendTestReceipt) { Text(stringResource(R.string.btn_send_test)) }
             OutlinedButton(onClick = {
                 context.startActivity(
                     android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS)
