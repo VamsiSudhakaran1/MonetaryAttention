@@ -81,4 +81,56 @@
         <item quantity="one">%d session</item>
         <item quantity="other">%d sessions</item>
     </plurals>
+    <plurals name="ads_count">
+        <item quantity="one">%d ad</item>
+        <item quantity="other">%d ads</item>
+    </plurals>
+
+    <!-- Home (interpolated) -->
+    <string name="today_label">TODAY · %1$s</string>
+    <string name="apps_around">Apps around %1$s</string>
+    <string name="busiest_around">Busiest around %1$s. Tap a bar to see apps.</string>
+    <string name="ad_stats">%1$.1f/min · %2$ds on screen · ~%3$ds each</string>
+
+    <!-- Reports (interpolated) -->
+    <string name="vs_last_week">%1$s vs last week</string>
+    <string name="yearly_line_1">of monetized attention in a year — about %1$s on the feed, and nothing comes back to you.</string>
+    <string name="yearly_line_2">of attention value in a year. It adds up far faster than it feels — and none returns to you.</string>
+    <string name="yearly_line_3">of monetized attention you may create in a year — none of it returns to you.</string>
+    <string name="yearly_line_4">of attention value over a year. Small moments, but still nothing returned to you.</string>
+
+    <!-- Receipt: how it was calculated -->
+    <string name="calc_intro">Your time × a typical ad rate × a CPM range. Always a range, never exact.</string>
+    <string name="calc_ads">%1$s × ~%2$.2f ads/min ≈ %3$d ads</string>
+    <string name="calc_cpm">× %1$s CPM ÷ 1000 = %2$s</string>
+    <string name="calc_adfree">ad-free / not monetized → %1$s</string>
+
+    <!-- Settings: long descriptions -->
+    <string name="desc_currency">Auto-detected from your region. Values are regional estimates.</string>
+    <string name="desc_hard_truth">Stronger wording on your receipt and notification. The numbers never change.</string>
+    <string name="desc_quirky">Cheeky, funnier wording. Overrides hard truth.</string>
+    <string name="desc_adfree">Pay for Premium (YouTube, X, …)? Mark it ad-free. We keep showing your time but stop estimating ad value for it.</string>
+    <string name="desc_auto_ad">Opt-in. Counts real “Sponsored” labels on-device in supported apps so your estimates become actual ad counts — great for Reels. Reads only ad markers, stores only counts, and you can turn it off anytime in Accessibility settings.</string>
+    <string name="btn_open_accessibility">Open Accessibility settings</string>
+    <string name="desc_calibrate">Saw an ad? Tap the app below. After ~15 minutes on a platform your real ad frequency replaces our default estimate. Nothing leaves your device.</string>
+    <string name="recorded_ad">Recorded an ad for %1$s</string>
+    <string name="lbl_plus_ad">+ ad</string>
+    <string name="desc_calibrate_tile">Prefer a shortcut? Add the “I saw an ad” Quick Settings tile so you can tap it without opening the app.</string>
+    <string name="btn_add_tile">Add Quick Settings tile</string>
+    <string name="desc_how_estimate">We read only aggregate app usage time — never screen content, messages, or ads themselves. Value is a transparent estimate from typical ad load and CPM ranges, shown as a range to stay honest.</string>
+
+    <!-- Notification health -->
+    <string name="health_notifs">Notifications allowed</string>
+    <string name="health_channel">Receipt channel on</string>
+    <string name="health_battery">Battery unrestricted</string>
+    <string name="cd_ok">OK</string>
+    <string name="cd_problem">Problem</string>
+    <string name="btn_notif_settings">Notif settings</string>
+    <string name="btn_allow_bg">Allow background activity</string>
+    <string name="health_tip">If “Send test” shows nothing, fix the red items. Some phones (Xiaomi, Realme, Oppo, Vivo) also require enabling Autostart for the app.</string>
+
+    <!-- Misc -->
+    <string name="cd_share">Share</string>
+    <string name="toast_test_sent">Test sent. If nothing appears, check Notification health below.</string>
+    <string name="toast_tile_manual">Add the “I saw an ad” tile from your Quick Settings edit screen.</string>
 </resources>

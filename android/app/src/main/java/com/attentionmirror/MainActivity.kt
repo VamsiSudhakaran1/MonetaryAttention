@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                         com.attentionmirror.notification.ReceiptNotifier.showTest(this)
                         android.widget.Toast.makeText(
                             this,
-                            "Test sent. If nothing appears, check Notification health below.",
+                            getString(R.string.toast_test_sent),
                             android.widget.Toast.LENGTH_LONG,
                         ).show()
                     },
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
             android.widget.Toast.makeText(
                 this,
-                "Add the \"I saw an ad\" tile from your Quick Settings edit screen.",
+                getString(R.string.toast_tile_manual),
                 android.widget.Toast.LENGTH_LONG,
             ).show()
             return

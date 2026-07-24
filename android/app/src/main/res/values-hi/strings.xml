@@ -81,4 +81,50 @@
         <item quantity="one">%d सेशन</item>
         <item quantity="other">%d सेशन</item>
     </plurals>
+    <plurals name="ads_count">
+        <item quantity="one">%d विज्ञापन</item>
+        <item quantity="other">%d विज्ञापन</item>
+    </plurals>
+
+    <string name="today_label">आज · %1$s</string>
+    <string name="apps_around">%1$s के आसपास ऐप्स</string>
+    <string name="busiest_around">%1$s के आसपास सबसे व्यस्त। ऐप्स देखने के लिए बार टैप करें।</string>
+    <string name="ad_stats">%1$.1f/मिनट · %2$ds स्क्रीन पर · ~%3$ds औसत</string>
+
+    <string name="vs_last_week">पिछले हफ़्ते से %1$s</string>
+    <string name="yearly_line_1">साल भर की मॉनिटाइज़्ड अटेंशन — फ़ीड पर लगभग %1$s, और आपको कुछ वापस नहीं आता।</string>
+    <string name="yearly_line_2">साल भर की अटेंशन वैल्यू। यह एहसास से कहीं तेज़ जुड़ती है — और कुछ भी आपको वापस नहीं मिलता।</string>
+    <string name="yearly_line_3">साल भर में आप जितनी मॉनिटाइज़्ड अटेंशन बना सकते हैं — उसमें से कुछ भी वापस नहीं मिलता।</string>
+    <string name="yearly_line_4">साल भर की अटेंशन वैल्यू। छोटे-छोटे पल, फिर भी आपको कुछ वापस नहीं मिला।</string>
+
+    <string name="calc_intro">आपका समय × सामान्य विज्ञापन दर × एक CPM रेंज। हमेशा एक रेंज, कभी सटीक नहीं।</string>
+    <string name="calc_ads">%1$s × ~%2$.2f विज्ञापन/मिनट ≈ %3$d विज्ञापन</string>
+    <string name="calc_cpm">× %1$s CPM ÷ 1000 = %2$s</string>
+    <string name="calc_adfree">विज्ञापन-मुक्त / मॉनिटाइज़्ड नहीं → %1$s</string>
+
+    <string name="desc_currency">आपके क्षेत्र से स्वतः पहचाना गया। मान क्षेत्रीय अनुमान हैं।</string>
+    <string name="desc_hard_truth">आपकी रसीद और नोटिफिकेशन पर सख़्त शब्द। संख्याएँ कभी नहीं बदलतीं।</string>
+    <string name="desc_quirky">चंचल, मज़ेदार शब्द। हार्ड ट्रुथ पर हावी।</string>
+    <string name="desc_adfree">प्रीमियम के लिए भुगतान करते हैं (YouTube, X, …)? इसे विज्ञापन-मुक्त चिह्नित करें। हम आपका समय दिखाते रहेंगे पर उसके लिए विज्ञापन वैल्यू का अनुमान बंद कर देंगे।</string>
+    <string name="desc_auto_ad">ऑप्ट-इन। समर्थित ऐप्स में डिवाइस पर असली “Sponsored” लेबल गिनता है ताकि आपके अनुमान असली विज्ञापन गिनती बन जाएँ — रील्स के लिए बढ़िया। सिर्फ़ विज्ञापन मार्कर पढ़ता है, सिर्फ़ गिनती सहेजता है, और आप इसे Accessibility सेटिंग्स में कभी भी बंद कर सकते हैं।</string>
+    <string name="btn_open_accessibility">Accessibility सेटिंग्स खोलें</string>
+    <string name="desc_calibrate">विज्ञापन देखा? नीचे ऐप टैप करें। किसी प्लेटफ़ॉर्म पर ~15 मिनट के बाद आपकी असली विज्ञापन फ़्रीक्वेंसी हमारे डिफ़ॉल्ट अनुमान की जगह ले लेती है। कुछ भी आपके डिवाइस से बाहर नहीं जाता।</string>
+    <string name="recorded_ad">%1$s के लिए एक विज्ञापन दर्ज किया</string>
+    <string name="lbl_plus_ad">+ विज्ञापन</string>
+    <string name="desc_calibrate_tile">शॉर्टकट चाहिए? “I saw an ad” क्विक सेटिंग्स टाइल जोड़ें ताकि ऐप खोले बिना टैप कर सकें।</string>
+    <string name="btn_add_tile">क्विक सेटिंग्स टाइल जोड़ें</string>
+    <string name="desc_how_estimate">हम सिर्फ़ कुल ऐप उपयोग समय पढ़ते हैं — कभी स्क्रीन सामग्री, संदेश या विज्ञापन नहीं। वैल्यू सामान्य विज्ञापन लोड और CPM रेंज से एक पारदर्शी अनुमान है, ईमानदार रहने के लिए रेंज में दिखाया गया।</string>
+
+    <string name="health_notifs">नोटिफिकेशन की अनुमति</string>
+    <string name="health_channel">रसीद चैनल चालू</string>
+    <string name="health_battery">बैटरी अप्रतिबंधित</string>
+    <string name="cd_ok">ठीक</string>
+    <string name="cd_problem">समस्या</string>
+    <string name="btn_notif_settings">नोटिफ सेटिंग्स</string>
+    <string name="btn_allow_bg">बैकग्राउंड गतिविधि अनुमति दें</string>
+    <string name="health_tip">अगर “Send test” कुछ नहीं दिखाता, तो लाल आइटम ठीक करें। कुछ फ़ोन (Xiaomi, Realme, Oppo, Vivo) को ऐप के लिए Autostart चालू करना भी ज़रूरी होता है।</string>
+
+    <string name="cd_share">शेयर</string>
+    <string name="toast_test_sent">टेस्ट भेजा गया। अगर कुछ न दिखे, तो नीचे नोटिफिकेशन स्थिति देखें।</string>
+    <string name="toast_tile_manual">अपनी क्विक सेटिंग्स एडिट स्क्रीन से “I saw an ad” टाइल जोड़ें।</string>
 </resources>

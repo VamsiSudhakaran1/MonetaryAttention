@@ -81,4 +81,50 @@
         <item quantity="one">%d அமர்வு</item>
         <item quantity="other">%d அமர்வுகள்</item>
     </plurals>
+    <plurals name="ads_count">
+        <item quantity="one">%d விளம்பரம்</item>
+        <item quantity="other">%d விளம்பரங்கள்</item>
+    </plurals>
+
+    <string name="today_label">இன்று · %1$s</string>
+    <string name="apps_around">%1$s அளவில் ஆப்கள்</string>
+    <string name="busiest_around">%1$s அளவில் அதிக பயன்பாடு. ஆப்களை காண ஒரு பாரை தட்டுங்கள்.</string>
+    <string name="ad_stats">%1$.1f/நிமிடம் · %2$ds திரையில் · ~%3$ds சராசரி</string>
+
+    <string name="vs_last_week">கடந்த வாரத்துடன் %1$s</string>
+    <string name="yearly_line_1">ஒரு வருடத்தில் பணமாக்கப்பட்ட கவனம் — ஃபீடில் சுமார் %1$s, உங்களுக்கு எதுவும் திரும்பி வராது.</string>
+    <string name="yearly_line_2">ஒரு வருடத்தின் கவன மதிப்பு. தோன்றுவதை விட வேகமாக சேரும் — உங்களுக்கு எதுவும் திரும்பாது.</string>
+    <string name="yearly_line_3">ஒரு வருடத்தில் நீங்கள் உருவாக்கக்கூடிய கவனம் — அதில் எதுவும் உங்களுக்கு திரும்பாது.</string>
+    <string name="yearly_line_4">ஒரு வருடத்தின் கவன மதிப்பு. சிறிய தருணங்கள், இருந்தாலும் உங்களுக்கு எதுவும் திரும்பல.</string>
+
+    <string name="calc_intro">உங்கள் நேரம் × சராசரி விளம்பர விகிதம் × ஒரு CPM வரம்பு. எப்போதும் ஒரு வரம்பு, துல்லியம் அல்ல.</string>
+    <string name="calc_ads">%1$s × ~%2$.2f விளம்பரம்/நிமிடம் ≈ %3$d விளம்பரங்கள்</string>
+    <string name="calc_cpm">× %1$s CPM ÷ 1000 = %2$s</string>
+    <string name="calc_adfree">விளம்பரமில்லா / பணமாக்கப்படவில்லை → %1$s</string>
+
+    <string name="desc_currency">உங்கள் பகுதியிலிருந்து தானாக கண்டறியப்பட்டது. மதிப்புகள் பிராந்திய மதிப்பீடுகள்.</string>
+    <string name="desc_hard_truth">உங்கள் ரசீது மற்றும் அறிவிப்பில் கடுமையான வார்த்தைகள். எண்கள் மாறாது.</string>
+    <string name="desc_quirky">விளையாட்டுத்தனமான, வேடிக்கையான வார்த்தைகள். ஹார்ட் ட்ரூத்தை மீறும்.</string>
+    <string name="desc_adfree">ப்ரீமியத்திற்கு பணம் செலுத்துகிறீர்களா (YouTube, X, …)? அதை விளம்பரமில்லாதது என குறிக்கவும். உங்கள் நேரத்தை காட்டுவோம் ஆனால் அதற்கு விளம்பர மதிப்பீட்டை நிறுத்துவோம்.</string>
+    <string name="desc_auto_ad">ஆப்ட்-இன். ஆதரிக்கப்படும் ஆப்களில் சாதனத்தில் உண்மையான “Sponsored” லேபிள்களை எண்ணுகிறது, இதனால் உங்கள் மதிப்பீடுகள் உண்மையான விளம்பர எண்ணிக்கை ஆகும் — ரீல்களுக்கு சிறந்தது. விளம்பர அடையாளங்களை மட்டும் படிக்கிறது, எண்ணிக்கையை மட்டும் சேமிக்கிறது, Accessibility அமைப்புகளில் எப்போது வேண்டுமானாலும் நிறுத்தலாம்.</string>
+    <string name="btn_open_accessibility">Accessibility அமைப்புகளை திற</string>
+    <string name="desc_calibrate">விளம்பரம் பார்த்தீர்களா? கீழே ஆப்பை தட்டுங்கள். ஒரு தளத்தில் ~15 நிமிடங்களுக்குப் பிறகு உங்கள் உண்மையான விளம்பர அதிர்வெண் எங்கள் இயல்பு மதிப்பீட்டை மாற்றும். எதுவும் உங்கள் சாதனத்தை விட்டு வெளியேறாது.</string>
+    <string name="recorded_ad">%1$s க்கு ஒரு விளம்பரம் பதிவு செய்யப்பட்டது</string>
+    <string name="lbl_plus_ad">+ விளம்பரம்</string>
+    <string name="desc_calibrate_tile">ஷார்ட்கட் வேண்டுமா? “I saw an ad” க்விக் செட்டிங்ஸ் டைலை சேர்க்கவும், இதனால் ஆப்பை திறக்காமல் தட்டலாம்.</string>
+    <string name="btn_add_tile">க்விக் செட்டிங்ஸ் டைல் சேர்</string>
+    <string name="desc_how_estimate">நாங்கள் மொத்த ஆப் பயன்பாட்டு நேரத்தை மட்டுமே படிக்கிறோம் — திரை உள்ளடக்கம், செய்திகள் அல்லது விளம்பரங்களை ஒருபோதும் இல்லை. மதிப்பு சராசரி விளம்பர சுமை மற்றும் CPM வரம்புகளிலிருந்து ஒரு வெளிப்படையான மதிப்பீடு, நேர்மையாக இருக்க வரம்பாக காட்டப்படுகிறது.</string>
+
+    <string name="health_notifs">அறிவிப்புகள் அனுமதிக்கப்பட்டன</string>
+    <string name="health_channel">ரசீது சேனல் இயக்கத்தில்</string>
+    <string name="health_battery">பேட்டரி கட்டுப்பாடில்லாதது</string>
+    <string name="cd_ok">சரி</string>
+    <string name="cd_problem">சிக்கல்</string>
+    <string name="btn_notif_settings">அறிவிப்பு அமைப்புகள்</string>
+    <string name="btn_allow_bg">பின்னணி செயல்பாட்டை அனுமதி</string>
+    <string name="health_tip">“Send test” எதையும் காட்டவில்லை என்றால், சிவப்பு உருப்படிகளை சரிசெய்யவும். சில ஃபோன்கள் (Xiaomi, Realme, Oppo, Vivo) ஆப்பிற்கு Autostart-ஐ இயக்க வேண்டும்.</string>
+
+    <string name="cd_share">பகிர்</string>
+    <string name="toast_test_sent">டெஸ்ட் அனுப்பப்பட்டது. எதுவும் தோன்றவில்லை என்றால், கீழே அறிவிப்பு நிலையை பாருங்கள்.</string>
+    <string name="toast_tile_manual">உங்கள் க்விக் செட்டிங்ஸ் எடிட் திரையிலிருந்து “I saw an ad” டைலை சேர்க்கவும்.</string>
 </resources>

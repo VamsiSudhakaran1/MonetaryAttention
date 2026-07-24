@@ -111,7 +111,7 @@ fun HomeScreen(
 ) {
     ScreenColumn {
         Text(
-            "TODAY · ${dateLabel.uppercase()}",
+            stringResource(R.string.today_label, dateLabel.uppercase()),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -207,7 +207,7 @@ fun HomeScreen(
                     val apps = Timeline.appsInHour(sessions, dayStart, selectedHour)
                         .entries.sortedByDescending { it.value }
                     Text(
-                        "Apps around ${Formatting.hourLabel(selectedHour)}",
+                        stringResource(R.string.apps_around, Formatting.hourLabel(selectedHour)),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(Modifier.height(8.dp))
@@ -221,7 +221,7 @@ fun HomeScreen(
                         apps.forEach { (pkg, secs) -> MiniAppRow(pkg, Formatting.durationShort(secs)) }
                     }
                 } else {
-                    EstimateNote("Busiest around ${Formatting.hourLabel(peak)}. Tap a bar to see apps.")
+                    EstimateNote(stringResource(R.string.busiest_around, Formatting.hourLabel(peak)))
                 }
             }
         }
@@ -350,11 +350,15 @@ private fun AdDetailRow(ad: com.attentionmirror.domain.AdDetail) {
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(ad.platform, style = MaterialTheme.typography.titleMedium)
-                Text("${ad.count} ads", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    pluralStringResource(R.plurals.ads_count, ad.count, ad.count),
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
             Spacer(Modifier.height(4.dp))
             Text(
-                "%.1f/min · %ds on screen · ~%ds each".format(
+                stringResource(
+                    R.string.ad_stats,
                     ad.adsPerMinute,
                     ad.totalAdSeconds,
                     ad.avgAdSeconds.toInt(),
@@ -470,7 +474,7 @@ private fun HowCalculated(receipt: AttentionReceipt, currency: Currency) {
         if (expanded) {
             Spacer(Modifier.height(8.dp))
             Text(
-                "Your time × a typical ad rate × a CPM range. Always a range, never exact.",
+                stringResource(R.string.calc_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -480,16 +484,19 @@ private fun HowCalculated(receipt: AttentionReceipt, currency: Currency) {
                 Spacer(Modifier.height(12.dp))
                 Text(p.platform, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "${Formatting.minutes(p.minutes)} × ~%.2f ads/min ≈ ${p.estimatedAdsSeen} ads".format(perMin),
+                    stringResource(R.string.calc_ads, Formatting.minutes(p.minutes), perMin, p.estimatedAdsSeen),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     if (config != null && p.estimatedAdsSeen > 0) {
-                        "× ${Formatting.valueRange(config.lowCpmInr.toInt(), config.highCpmInr.toInt(), currency)} CPM ÷ 1000 = " +
-                            Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency)
+                        stringResource(
+                            R.string.calc_cpm,
+                            Formatting.valueRange(config.lowCpmInr.toInt(), config.highCpmInr.toInt(), currency),
+                            Formatting.valueRange(p.valueLowInr.toInt(), p.valueHighInr.toInt(), currency),
+                        )
                     } else {
-                        "ad-free / not monetized → ${Formatting.money(0, currency)}"
+                        stringResource(R.string.calc_adfree, Formatting.money(0, currency))
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -581,7 +588,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(Formatting.minutes(total.totalMinutes), style = MaterialTheme.typography.displaySmall)
-                if (trend != "—") Pill("$trend vs last week", trendColor)
+                if (trend != "—") Pill(stringResource(R.string.vs_last_week, trend), trendColor)
             }
             Text(
                 stringResource(R.string.lbl_spent_week),
@@ -662,7 +669,7 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
             )
             Spacer(Modifier.height(6.dp))
             Text(
-                yearlyLine(yearHigh, Formatting.minutes(total.totalMinutes * 52)),
+                stringResource(yearlyLineRes(yearHigh), Formatting.minutes(total.totalMinutes * 52)),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -671,16 +678,13 @@ fun ReportsScreen(week: WeekReport?, currency: Currency) {
     }
 }
 
-/** Yearly-projection sentence that shifts tone with the size of the number. */
-private fun yearlyLine(yearHigh: Int, yearlyTime: String): String = when {
-    yearHigh >= 12000 ->
-        "of monetized attention in a year — about $yearlyTime on the feed, and nothing comes back to you."
-    yearHigh >= 5000 ->
-        "of attention value in a year. It adds up far faster than it feels — and none returns to you."
-    yearHigh >= 1500 ->
-        "of monetized attention you may create in a year — none of it returns to you."
-    else ->
-        "of attention value over a year. Small moments, but still nothing returned to you."
+/** Yearly-projection sentence (as a string resource) that shifts tone with the
+ *  size of the number. The %1$s placeholder is the projected yearly time. */
+private fun yearlyLineRes(yearHigh: Int): Int = when {
+    yearHigh >= 12000 -> R.string.yearly_line_1
+    yearHigh >= 5000 -> R.string.yearly_line_2
+    yearHigh >= 1500 -> R.string.yearly_line_3
+    else -> R.string.yearly_line_4
 }
 
 @Composable
@@ -754,7 +758,7 @@ fun SettingsScreen(
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
                     Text(stringResource(R.string.lbl_display_currency), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Auto-detected from your region. Values are regional estimates.",
+                        stringResource(R.string.desc_currency),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -828,7 +832,7 @@ fun SettingsScreen(
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
                     Text(stringResource(R.string.lbl_hard_truth), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Stronger wording on your receipt and notification. The numbers never change.",
+                        stringResource(R.string.desc_hard_truth),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -844,7 +848,7 @@ fun SettingsScreen(
                 Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
                     Text(stringResource(R.string.lbl_quirky), style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Cheeky, funnier wording. Overrides hard truth.",
+                        stringResource(R.string.desc_quirky),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -855,8 +859,7 @@ fun SettingsScreen(
 
         Section(title = stringResource(R.string.section_adfree)) {
             Text(
-                "Pay for Premium (YouTube, X, …)? Mark it ad-free. We keep showing " +
-                    "your time but stop estimating ad value for it.",
+                stringResource(R.string.desc_adfree),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 8.dp),
@@ -884,16 +887,13 @@ fun SettingsScreen(
         if (com.attentionmirror.BuildConfig.HAS_AD_SCANNER) {
             Section(title = stringResource(R.string.section_auto_ad)) {
                 Text(
-                    "Opt-in. Counts real “Sponsored” labels on-device in supported " +
-                        "apps so your estimates become actual ad counts — great for " +
-                        "Reels. Reads only ad markers, stores only counts, and you can " +
-                        "turn it off anytime in Accessibility settings.",
+                    stringResource(R.string.desc_auto_ad),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(bottom = 10.dp),
                 )
                 Button(onClick = onOpenAdScanner) {
-                    Text("Open Accessibility settings")
+                    Text(stringResource(R.string.btn_open_accessibility))
                 }
             }
         }
@@ -901,9 +901,7 @@ fun SettingsScreen(
         Section(title = stringResource(R.string.section_calibrate)) {
             val context = LocalContext.current
             Text(
-                "Saw an ad? Tap the app below. After ~15 minutes on a platform your " +
-                    "real ad frequency replaces our default estimate. Nothing leaves " +
-                    "your device.",
+                stringResource(R.string.desc_calibrate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 8.dp),
@@ -917,7 +915,7 @@ fun SettingsScreen(
                             onMarkAd(p.packageName)
                             Toast.makeText(
                                 context,
-                                "Recorded an ad for ${p.platform}",
+                                context.getString(R.string.recorded_ad, p.platform),
                                 Toast.LENGTH_SHORT,
                             ).show()
                         }
@@ -931,7 +929,7 @@ fun SettingsScreen(
                         Text(p.platform, style = MaterialTheme.typography.titleMedium)
                     }
                     Text(
-                        "+ ad",
+                        stringResource(R.string.lbl_plus_ad),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -939,20 +937,17 @@ fun SettingsScreen(
             }
             Spacer(Modifier.height(12.dp))
             Text(
-                "Prefer a shortcut? Add the \"I saw an ad\" Quick Settings tile so you " +
-                    "can tap it without opening the app.",
+                stringResource(R.string.desc_calibrate_tile),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(8.dp))
-            Button(onClick = onAddAdTile) { Text("Add Quick Settings tile") }
+            Button(onClick = onAddAdTile) { Text(stringResource(R.string.btn_add_tile)) }
         }
 
         Section(title = stringResource(R.string.section_how_estimate)) {
             Text(
-                "We read only aggregate app usage time — never screen content, " +
-                    "messages, or ads themselves. Value is a transparent estimate from " +
-                    "typical ad load and CPM ranges, shown as a range to stay honest.",
+                stringResource(R.string.desc_how_estimate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -981,11 +976,11 @@ private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
     }
 
     Section(title = stringResource(R.string.section_notif_health)) {
-        StatusRow("Notifications allowed", allowed)
+        StatusRow(stringResource(R.string.health_notifs), allowed)
         HairlineDivider()
-        StatusRow("Receipt channel on", channelOn)
+        StatusRow(stringResource(R.string.health_channel), channelOn)
         HairlineDivider()
-        StatusRow("Battery unrestricted", batteryOk)
+        StatusRow(stringResource(R.string.health_battery), batteryOk)
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button(onClick = onSendTestReceipt) { Text(stringResource(R.string.btn_send_test)) }
@@ -995,7 +990,7 @@ private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
                         .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
                         .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
                 )
-            }) { Text("Notif settings") }
+            }) { Text(stringResource(R.string.btn_notif_settings)) }
         }
         if (!batteryOk) {
             Spacer(Modifier.height(8.dp))
@@ -1004,12 +999,11 @@ private fun NotificationHealth(onSendTestReceipt: () -> Unit) {
                     android.content.Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
                         .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
                 )
-            }) { Text("Allow background activity") }
+            }) { Text(stringResource(R.string.btn_allow_bg)) }
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            "If \"Send test\" shows nothing, fix the red items. Some phones " +
-                "(Xiaomi, Realme, Oppo, Vivo) also require enabling Autostart for the app.",
+            stringResource(R.string.health_tip),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1026,7 +1020,7 @@ private fun StatusRow(label: String, ok: Boolean) {
         Text(label, style = MaterialTheme.typography.titleMedium)
         Icon(
             if (ok) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
-            contentDescription = if (ok) "OK" else "Problem",
+            contentDescription = if (ok) stringResource(R.string.cd_ok) else stringResource(R.string.cd_problem),
             tint = if (ok) Brand.Mint else Brand.Coral,
         )
     }

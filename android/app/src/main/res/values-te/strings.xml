@@ -81,4 +81,50 @@
         <item quantity="one">%d సెషన్</item>
         <item quantity="other">%d సెషన్‌లు</item>
     </plurals>
+    <plurals name="ads_count">
+        <item quantity="one">%d ప్రకటన</item>
+        <item quantity="other">%d ప్రకటనలు</item>
+    </plurals>
+
+    <string name="today_label">ఈరోజు · %1$s</string>
+    <string name="apps_around">%1$s సమయంలో యాప్‌లు</string>
+    <string name="busiest_around">%1$s సమయంలో అత్యధిక వినియోగం. యాప్‌లను చూడటానికి ఒక బార్‌ను ట్యాప్ చేయండి.</string>
+    <string name="ad_stats">%1$.1f/నిమిషం · %2$ds స్క్రీన్‌పై · ~%3$ds సగటు</string>
+
+    <string name="vs_last_week">గత వారంతో %1$s</string>
+    <string name="yearly_line_1">ఏడాదిలో మానిటైజ్ చేయబడిన అటెన్షన్ — ఫీడ్‌లో దాదాపు %1$s, మీకు ఏమీ తిరిగి రాదు.</string>
+    <string name="yearly_line_2">ఏడాది అటెన్షన్ విలువ. అనిపించే దానికంటే వేగంగా పోగవుతుంది — మీకు ఏమీ తిరిగి రాదు.</string>
+    <string name="yearly_line_3">ఏడాదిలో మీరు సృష్టించగల మానిటైజ్ అటెన్షన్ — అందులో ఏదీ మీకు తిరిగి రాదు.</string>
+    <string name="yearly_line_4">ఏడాది అటెన్షన్ విలువ. చిన్న క్షణాలు, అయినా మీకు ఏమీ తిరిగి రాలేదు.</string>
+
+    <string name="calc_intro">మీ సమయం × సాధారణ ప్రకటన రేటు × ఒక CPM పరిధి. ఎప్పుడూ ఒక పరిధి, ఖచ్చితం కాదు.</string>
+    <string name="calc_ads">%1$s × ~%2$.2f ప్రకటనలు/నిమిషం ≈ %3$d ప్రకటనలు</string>
+    <string name="calc_cpm">× %1$s CPM ÷ 1000 = %2$s</string>
+    <string name="calc_adfree">ప్రకటన-రహిత / మానిటైజ్ కాలేదు → %1$s</string>
+
+    <string name="desc_currency">మీ ప్రాంతం నుండి స్వయంచాలకంగా గుర్తించబడింది. విలువలు ప్రాంతీయ అంచనాలు.</string>
+    <string name="desc_hard_truth">మీ రసీదు మరియు నోటిఫికేషన్‌లో కఠినమైన పదాలు. సంఖ్యలు మారవు.</string>
+    <string name="desc_quirky">చమత్కారమైన, ఫన్నీ పదాలు. హార్డ్ ట్రూత్‌ను అధిగమిస్తుంది.</string>
+    <string name="desc_adfree">ప్రీమియం కోసం చెల్లిస్తారా (YouTube, X, …)? దాన్ని ప్రకటన-రహితంగా గుర్తించండి. మీ సమయాన్ని చూపిస్తూనే ఉంటాం కానీ దానికి ప్రకటన విలువ అంచనాను ఆపేస్తాం.</string>
+    <string name="desc_auto_ad">ఆప్ట్-ఇన్. మద్దతు ఉన్న యాప్‌లలో పరికరంలో నిజమైన “Sponsored” లేబుల్‌లను లెక్కిస్తుంది, తద్వారా మీ అంచనాలు నిజమైన ప్రకటన సంఖ్యలు అవుతాయి — రీల్స్‌కు గొప్పది. ప్రకటన గుర్తులను మాత్రమే చదువుతుంది, సంఖ్యలను మాత్రమే భద్రపరుస్తుంది, Accessibility సెట్టింగ్‌లలో ఎప్పుడైనా ఆపవచ్చు.</string>
+    <string name="btn_open_accessibility">Accessibility సెట్టింగ్‌లను తెరవండి</string>
+    <string name="desc_calibrate">ప్రకటన చూశారా? కింద యాప్‌ను ట్యాప్ చేయండి. ఒక ప్లాట్‌ఫారమ్‌లో ~15 నిమిషాల తర్వాత మీ నిజమైన ప్రకటన ఫ్రీక్వెన్సీ మా డిఫాల్ట్ అంచనాను భర్తీ చేస్తుంది. ఏదీ మీ పరికరం నుండి బయటకు వెళ్లదు.</string>
+    <string name="recorded_ad">%1$s కోసం ఒక ప్రకటన నమోదు చేయబడింది</string>
+    <string name="lbl_plus_ad">+ ప్రకటన</string>
+    <string name="desc_calibrate_tile">షార్ట్‌కట్ కావాలా? “I saw an ad” క్విక్ సెట్టింగ్‌ల టైల్‌ను జోడించండి, తద్వారా యాప్ తెరవకుండా ట్యాప్ చేయవచ్చు.</string>
+    <string name="btn_add_tile">క్విక్ సెట్టింగ్‌ల టైల్ జోడించండి</string>
+    <string name="desc_how_estimate">మేము మొత్తం యాప్ వినియోగ సమయాన్ని మాత్రమే చదువుతాము — స్క్రీన్ కంటెంట్, సందేశాలు లేదా ప్రకటనలను ఎప్పటికీ కాదు. విలువ సాధారణ ప్రకటన లోడ్ మరియు CPM పరిధుల నుండి ఒక పారదర్శక అంచనా, నిజాయితీగా ఉండటానికి పరిధిగా చూపబడింది.</string>
+
+    <string name="health_notifs">నోటిఫికేషన్‌లు అనుమతించబడ్డాయి</string>
+    <string name="health_channel">రసీదు ఛానెల్ ఆన్</string>
+    <string name="health_battery">బ్యాటరీ నియంత్రణ లేదు</string>
+    <string name="cd_ok">సరే</string>
+    <string name="cd_problem">సమస్య</string>
+    <string name="btn_notif_settings">నోటిఫ్ సెట్టింగ్‌లు</string>
+    <string name="btn_allow_bg">బ్యాక్‌గ్రౌండ్ యాక్టివిటీని అనుమతించండి</string>
+    <string name="health_tip">“Send test” ఏమీ చూపకపోతే, ఎరుపు అంశాలను సరిచేయండి. కొన్ని ఫోన్‌లు (Xiaomi, Realme, Oppo, Vivo) యాప్ కోసం Autostart ఆన్ చేయాల్సి ఉంటుంది.</string>
+
+    <string name="cd_share">షేర్</string>
+    <string name="toast_test_sent">టెస్ట్ పంపబడింది. ఏమీ కనిపించకపోతే, కింద నోటిఫికేషన్ స్థితిని చూడండి.</string>
+    <string name="toast_tile_manual">మీ క్విక్ సెట్టింగ్‌ల ఎడిట్ స్క్రీన్ నుండి “I saw an ad” టైల్‌ను జోడించండి.</string>
 </resources>

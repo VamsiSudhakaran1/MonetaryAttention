@@ -83,7 +83,7 @@ fun AttentionApp(
                 actions = {
                     if (Tab.entries[tab] == Tab.Home && state.today != null) {
                         IconButton(onClick = onShareReceipt) {
-                            Icon(Icons.Filled.IosShare, contentDescription = stringResource(R.string.tab_receipt))
+                            Icon(Icons.Filled.IosShare, contentDescription = stringResource(R.string.cd_share))
                         }
                     }
                 },
