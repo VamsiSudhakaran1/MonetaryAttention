@@ -23,8 +23,8 @@ android {
         applicationId = "com.attentionmirror"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.1.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -86,6 +86,16 @@ android {
     }
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
+
+    // The in-app Language picker needs every translation present on-device.
+    // App Bundles otherwise split resources by language and Play delivers only
+    // the device-locale pack, so switching to Hindi/Tamil/Telugu would fall back
+    // to English. Keep all languages in the base module.
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 }
 

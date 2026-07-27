@@ -954,7 +954,7 @@ fun SettingsScreen(
         }
 
         Text(
-            "Attention Mirror · v0.1.1",
+            "Attention Mirror · v0.1.2",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
